@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>File Manager</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    display: flex;
+    height: 100vh;
+    background: #0f2027;
+    color: #fff;
+}
+
+.main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.panel {
+    width: 100%;
+    background: #f3f3f3;
+    border-bottom: 1px solid #cfcfcf;
+}
+
+.menu {
+    display: flex;
+    padding-left: 10px;
+}
+
+.menu-item {
+    position: relative;
+    padding: 8px 14px;
+    cursor: pointer;
+    color: #000;
+    font-size: 14px;
+    user-select: none;
+}
+
+.menu-item:hover {
+    background: #e5f1fb;
+    border: 1px solid #0078d7;
+    border-bottom: none;
+}
+
+.submenu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: #ffffff;
+    border: 1px solid #cfcfcf;
+    min-width: 180px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    z-index: 100;
+    padding: 4px 0;
+}
+
+.menu-item.active .submenu {
+    display: block;
+}
+
+.submenu div {
+    padding: 8px 12px;
+    font-size: 14px;
+    color: #000;
+    cursor: pointer;
+}
+
+.submenu div:hover {
+    background: #0078d7;
+    color: #fff;
+}
+
+.separator {
+    height: 1px;
+    background: #ddd;
+    margin: 5px 0;
+}
+
+.content {
+    padding: 30px;
+    flex: 1;
+}
+
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.logout {
+    text-decoration: none;
+    padding: 8px 15px;
+    border-radius: 8px;
+    background: #ff4b5c;
+    color: white;
+}
+
+.file-toolbar {
+    margin-bottom: 15px;
+}
+
+.file-toolbar button {
+    padding: 8px 12px;
+    margin-right: 10px;
+    border: none;
+    border-radius: 6px;
+    background: #1e1e1e;
+    color: #fff;
+    cursor: pointer;
+}
+
+.file-path {
+    margin-bottom: 10px;
+    font-size: 14px;
+    color: #aaa;
+}
+
+.file-list {
+    background: #111;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+/* 🔥 MELHORADO */
+.file-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    border-bottom: 1px solid #222;
+    transition: 0.2s;
+}
+
+.file-item:hover {
+    background: #1a1a1a;
+}
+
+.file-name {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 15px;
+}
+
+.file-name span {
+    color: #888;
+    font-size: 12px;
+}
+
+/* 🔥 BOTÕES MAIS BONITOS */
+.file-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.file-actions button {
+    border: none;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: 0.2s;
+}
+
+/* Open */
+.file-actions button:first-child {
+    background: #0078d7;
+    color: #fff;
+}
+
+.file-actions button:first-child:hover {
+    background: #005fa3;
+}
+
+/* Delete */
+.file-actions button:last-child {
+    background: #ff4b5c;
+    color: #fff;
+}
+
+.file-actions button:last-child:hover {
+    background: #d63b4a;
+}
+
+/* 🔥 GRID MODE FIX */
+.grid-mode .file-item {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    border: 1px solid #222;
+    border-radius: 10px;
+    padding: 15px;
+}
+
+.grid-mode .file-name {
+    align-items: center;
+}
+
+.grid-mode .file-actions {
+    margin-top: 10px;
+    justify-content: center;
+}
+
+.grid-mode .file-actions button {
+    width: 70px;
+}
+
+.footer {
+    background: #111;
+    border-top: 1px solid #333;
+    padding: 15px;
+    text-align: center;
+    font-size: 14px;
+    color: #aaa;
+}
+
+.footer strong {
+    color: #fff;
+}
+
+/* 🔹 SERVER LOG (Windows Form style) */
+.server-log {
+    position: fixed;
+    inset: 0;
+
+    background: rgba(0,0,0,0.35);
+
+    display: none; /* controla via JS */
+    align-items: center;
+    justify-content: center;
+
+    z-index: 9999;
+}
+
+.server-log.active {
+    display: flex;
+}
+
+.server-log-panel {
+    width: 700px;
+    height: 500px;
+
+    background: #f0f0f0;
+    border: 1px solid #888;
+    border-radius: 6px;
+
+    margin: auto;
+    margin-top: 10%;
+
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.server-log-header {
+    background: #0078d7;
+    color: white;
+
+    padding: 8px 10px;
+    font-weight: bold;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.server-log-header button {
+    background: #ff4b5c;
+    border: none;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 13px;
+
+    padding: 6px 12px;
+    border-radius: 6px;
+
+    transition: 0.2s;
+}
+
+.server-log-header button:hover {
+    background: #ff2f44;
+}
+
+.server-log-body {
+    flex: 1;
+    padding: 12px;
+
+    background: #ffffff;
+    color: #000;
+
+    font-size: 13px;
+
+    overflow-y: auto;
+}
+
+/* 🔹 ABOUT BOX */
+.about-box {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    display: none;
+    z-index: 9999;
+}
+
+.about-window {
+    width: 400px;
+    background: #f0f0f0;
+    color: #000;
+    border: 1px solid #888;
+    border-radius: 6px;
+    margin: auto;
+    margin-top: 10%;
+    display: flex;
+    flex-direction: column;
+}
+
+.about-header {
+    background: #0078d7;
+    color: white;
+    padding: 8px 10px;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+}
+
+.about-header button {
+    background: #ff4b5c;
+    border: none;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 13px;
+
+    padding: 6px 12px;
+    border-radius: 6px;
+
+    transition: 0.2s;
+}
+
+.about-header button:hover {
+    background: #ff2f44;
+}
+
+.about-body {
+    padding: 20px;
+    font-size: 14px;
+}
+
+.about-footer {
+    padding: 10px;
+    text-align: right;
+    border-top: 1px solid #ccc;
+}
+
+.about-footer button {
+    padding: 6px 14px;
+    border: 1px solid #888;
+    background: #e0e0e0;
+    cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="main">
+
+<div class="panel">
+<div class="menu">
+
+<div class="menu-item" onclick="toggleMenu(this)">File
+    <div class="submenu">
+        <div onclick="window.location.href='/dashboard'">Painel</div>
+        <div onclick="upload()">Upload</div>
+        <div onclick="newFolder()">New Folder</div>
+        <div onclick="logout()">Logout</div>
+    </div>
+</div>
+
+<div class="menu-item" onclick="toggleMenu(this)">Edit
+    <div class="submenu">
+        <div>Copy</div>
+        <div>Paste</div>
+        <div>Delete</div>
+    </div>
+</div>
+
+<div class="menu-item" onclick="toggleMenu(this)">View
+    <div class="submenu">
+       <div onclick="setView('list')">List</div>
+       <div onclick="setView('grid')">Grid</div>
+    </div>
+</div>
+
+<div class="menu-item" onclick="toggleMenu(this)">Settings
+    <div class="submenu">
+       <div onclick="log('Opening settings')">Preferences</div>
+       <div onclick="toggleServerLog()">Server Log</div>
+    </div>
+</div>
+            
+<div class="menu-item" onclick="toggleMenu(this)">Help
+    <div class="submenu">
+        <div onclick="openAbout()">About</div>
+    </div>
+</div>
+
+</div>
+</div>
+
+<div class="content">
+
+<div class="topbar">
+<h2>File Manager</h2>
+<a href="/logout" class="logout">Logout</a>
+</div>
+
+<div class="file-toolbar">
+<button onclick="upload()">⬆️ Upload</button>
+<button onclick="newFolder()">📁 New Folder</button>
+</div>
+
+<div class="file-path" id="pathDisplay" onclick="editPath()">
+    /htdocs
+</div>
+
+<div class="file-list" id="fileList"></div>
+
+</div>
+
+<div class="footer">
+<p><strong>PhyPanel HTML</strong></p>
+<p>Version: 1.0 | By: Qubit</p>
+</div>
+
+</div>
+
+<!-- SERVER LOG -->
+<div class="server-log" id="serverLog">
+    <div class="server-log-panel">
+        <div class="server-log-header">
+            Server log console
+            <button onclick="closeServerLog()">Close</button>
+        </div>
+        <div class="server-log-body" id="serverLogBody"></div>
+    </div>
+</div>
+
+<!-- ABOUT BOX -->
+<div class="about-box" id="aboutBox">
+    <div class="about-window">
+        <div class="about-header">
+            About PhyPanel
+            <button onclick="closeAbout()">Close</button>
+        </div>
+        <div class="about-body">
+            <h3>PhyPanel</h3>
+            <p>Version: 1.0</p>
+            <p>Developer: Qubit</p>
+            <br>
+            <p>File Manager integrado ao painel local.</p>
+        </div>
+        <div class="about-footer">
+            <button onclick="closeAbout()">OK</button>
+        </div>
+    </div>
+</div>
+
+<script>
+function toggleMenu(el){
+    const isOpen = el.classList.contains("active");
+
+    document.querySelectorAll(".menu-item").forEach(m => {
+        m.classList.remove("active");
+    });
+
+    if(!isOpen){
+        el.classList.add("active");
+    }
+}
+
+document.querySelectorAll(".menu-item").forEach(item=>{
+    item.addEventListener("mouseenter", ()=>{
+        if(document.querySelector(".menu-item.active")){
+            document.querySelectorAll(".menu-item").forEach(m=>m.classList.remove("active"));
+            item.classList.add("active");
+        }
+    });
+});
+
+document.addEventListener("click", e=>{
+    if(!e.target.closest(".menu")){
+        document.querySelectorAll(".menu-item").forEach(m=>m.classList.remove("active"));
+    }
+});
+
+let files = [];
+
+async function fetchFiles(){
+    const res = await fetch("/api/files?path=" + encodeURIComponent(currentPath));
+    files = await res.json();
+    renderFiles();
+}
+
+function renderFiles(){
+    const list = document.getElementById("fileList");
+    list.innerHTML = "";
+
+    files.forEach((f,i)=>{
+
+        const date = new Date(f.date * 1000).toLocaleString();
+
+        list.innerHTML += `
+    <div class="file-item">
+        <div class="file-name">
+            <div>📄 ${f.name}</div>
+            <span>${date}</span>
+        </div>
+
+        <div class="file-actions">
+            <button onclick="openFile('${f.name}')">Open</button>
+            <button onclick="deleteFile('${f.name}')">Delete</button>
+        </div>
+    </div>
+`;
+    });
+}
+const DEBUG_LOG = true;
+function openFile(name){
+    window.open(currentPath + "/" + name, "_blank");
+}
+
+let currentPath = "/htdocs";
+
+function editPath(){
+    const el = document.getElementById("pathDisplay");
+
+    const input = document.createElement("input");
+    input.type = "text";
+    input.value = currentPath;
+    input.style.width = "100%";
+    input.style.padding = "4px";
+    input.style.borderRadius = "4px";
+    input.style.border = "1px solid #333";
+    input.style.background = "#111";
+    input.style.color = "#fff";
+
+    el.innerHTML = "";
+    el.appendChild(input);
+    input.focus();
+
+    input.addEventListener("keydown", function(e){
+        if(e.key === "Enter"){
+            changePath(input.value);
+        }
+    });
+
+    input.addEventListener("blur", function(){
+        el.innerText = currentPath;
+    });
+}
+
+function changePath(path){
+    if(!path.startsWith("/")){
+        path = "/" + path;
+    }
+
+    currentPath = path;
+
+    document.getElementById("pathDisplay").innerText = currentPath;
+
+    // 🔥 Aqui você pode adaptar pro backend depois
+    fetch("/api/files?path=" + encodeURIComponent(currentPath))
+        .then(res => res.json())
+        .then(data => {
+            files = data;
+            renderFiles();
+        })
+        .catch(() => {
+            serverLog("Erro ao acessar: " + currentPath);
+        });
+}
+
+/* 🔥 DELETE CORRIGIDO */
+async function deleteFile(name){
+    if(!confirm("Deletar arquivo?")) return;
+
+    try{
+        const res = await fetch("/delete/" + encodeURIComponent(name));
+
+        if(!res.ok){
+            alert("Erro ao deletar arquivo");
+            console.error("Erro:", res.status);
+            return;
+        }
+
+        serverLog("Arquivo deletado: " + name);
+        fetchFiles();
+
+    }catch(e){
+        console.error(e);
+        alert("Falha na conexão");
+        serverLog("Erro ao deletar: " + name);
+    }
+}
+
+function upload(){
+    let input = document.createElement("input");
+    input.type = "file";
+
+    input.onchange = async () => {
+        let file = input.files[0];
+        let formData = new FormData();
+        formData.append("file", file);
+
+        await fetch("/upload", {
+            method: "POST",
+            body: formData
+        });
+
+        fetchFiles();
+    };
+
+    input.click();
+}
+
+async function newFolder(){
+    let name = prompt("Folder name:");
+    if(name){
+        await fetch("/create_folder/" + name);
+        fetchFiles();
+    }
+}
+
+function log(msg){
+    if(DEBUG_LOG) console.log(msg);
+    serverLog("USER: " + msg);
+}
+
+function serverLog(msg){
+    const box = document.getElementById("serverLogBody");
+    if(!box) return;
+    const time = new Date().toLocaleTimeString();
+    box.innerHTML += `[${time}] ${msg}<br>`;
+    box.scrollTop = box.scrollHeight;
+}
+
+function toggleServerLog(){
+    document.getElementById("serverLog").classList.add("active");
+}
+
+function closeServerLog(){
+    document.getElementById("serverLog").classList.remove("active");
+}
+
+function logout(){
+    window.location.href = "/logout";
+}
+
+// VIEW MODE
+function setView(mode){
+    const list = document.getElementById("fileList");
+
+    if(mode === "grid"){
+        list.style.display = "grid";
+        list.style.gridTemplateColumns = "repeat(auto-fill, minmax(160px, 1fr))";
+        list.style.gap = "12px";
+
+        list.classList.add("grid-mode");
+    } else {
+        list.style.display = "block";
+        list.classList.remove("grid-mode");
+    }
+}
+
+function openAbout(){
+    document.getElementById("aboutBox").style.display = "block";
+}
+
+function closeAbout(){
+    document.getElementById("aboutBox").style.display = "none";
+}
+
+fetchFiles();
+</script>
+
+</body>
+</html>

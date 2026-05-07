@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MySQL Panel</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    display: flex;
+    height: 100vh;
+    background: #0f2027;
+    color: #fff;
+}
+
+.main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.panel {
+    width: 100%;
+    background: #f3f3f3;
+    border-bottom: 1px solid #cfcfcf;
+}
+
+.menu {
+    display: flex;
+    padding-left: 10px;
+}
+
+.menu-item {
+    position: relative;
+    padding: 8px 14px;
+    cursor: pointer;
+    color: #000;
+    font-size: 14px;
+    user-select: none;
+}
+
+.menu-item:hover {
+    background: #e5f1fb;
+    border: 1px solid #0078d7;
+    border-bottom: none;
+}
+
+.submenu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: #ffffff;
+    border: 1px solid #cfcfcf;
+    min-width: 180px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    z-index: 100;
+    padding: 4px 0;
+}
+
+.menu-item.active .submenu {
+    display: block;
+}
+
+.submenu div, .submenu a {
+    padding: 8px 12px;
+    font-size: 14px;
+    color: #000;
+    display: block;
+    text-decoration: none;
+}
+
+.submenu div:hover, .submenu a:hover {
+    background: #0078d7;
+    color: #fff;
+}
+
+.content {
+    padding: 30px;
+    flex: 1;
+}
+
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.logout {
+    text-decoration: none;
+    padding: 8px 15px;
+    border-radius: 8px;
+    background: #ff4b5c;
+    color: white;
+}
+
+.file-list {
+    background: #111;
+    border-radius: 10px;
+    padding: 10px;
+    margin-top: 15px;
+}
+
+.file-item {
+    padding: 10px;
+    border-bottom: 1px solid #222;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.file-item:hover {
+    background: #1e1e1e;
+}
+
+button {
+    padding: 6px 10px;
+    background: #333;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+button:hover {
+    background: #555;
+}
+
+/* 🔹 ABOUT BOX */
+.about-box {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    display: none;
+    z-index: 9999;
+}
+
+.about-window {
+    width: 400px;
+    background: #f0f0f0;
+    color: #000;
+    border: 1px solid #888;
+    border-radius: 6px;
+    margin: auto;
+    margin-top: 10%;
+    display: flex;
+    flex-direction: column;
+}
+
+.about-header {
+    background: #0078d7;
+    color: white;
+    padding: 8px 10px;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+}
+
+.about-header button {
+    background: #ff4b5c;
+    border: none;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 13px;
+
+    padding: 6px 12px;
+    border-radius: 6px;
+
+    transition: 0.2s;
+}
+
+.about-header button:hover {
+    background: #ff2f44;
+}
+
+.about-body {
+    padding: 20px;
+    font-size: 14px;
+}
+
+.about-footer {
+    padding: 10px;
+    text-align: right;
+    border-top: 1px solid #ccc;
+}
+
+.about-footer button {
+    padding: 6px 14px;
+    border: 1px solid #888;
+    background: #e0e0e0;
+    cursor: pointer;
+}
+
+.footer {
+    background: rgba(0,0,0,0.4);
+    border-top: 1px solid rgba(255,255,255,0.05);
+    padding: 15px;
+    text-align: center;
+    font-size: 13px;
+    color: #aaa;
+}
+
+.footer strong {
+    color: #fff;
+}
+</style>
+</head>
+
+<body>
+
+<div class="main">
+
+<div class="panel">
+<div class="menu">
+
+<div class="menu-item" onclick="toggleMenu(event,this)">
+    File
+    <div class="submenu">
+        <div onclick="window.location.href='/dashboard'">Painel</div>
+        <div onclick="logout()">Logout</div>
+    </div>
+</div>
+
+<div class="menu-item" onclick="toggleMenu(event, this)">
+    MySQL
+    <div class="submenu">
+        <div onclick="startMySQL()">Start Server</div>
+        <div onclick="stopMySQL()">Stop Server</div>
+        <div onclick="checkStatus()">Status</div>
+    </div>
+</div>
+
+<div class="menu-item" onclick="toggleMenu(event, this)">
+    Database
+    <div class="submenu">
+        <div onclick="createTable()">Criar Tabela</div>
+        <div onclick="loadTables()">Atualizar</div>
+    </div>
+</div>
+
+<div class="menu-item" onclick="toggleMenu(this)">Settings
+    <div class="submenu">
+        <div onclick="log('Opening settings')">Preferences</div>
+        <div onclick="toggleServerLog()">Server Log</div>
+    </div>
+</div>
+
+<div class="menu-item" onclick="toggleMenu(event, this)">
+    Help
+    <div class="submenu">
+        <div onclick="openAbout()">About</div>
+    </div>
+</div>
+
+</div>
+</div>
+
+<div class="content">
+<div class="topbar">
+<h2>MySQL Manager</h2>
+<a href="/logout" class="logout">Logout</a>
+</div>    
+
+<p id="status">Status: Carregando...</p>
+
+<div class="file-list" id="tableList"></div>
+
+</div>
+
+<div class="footer">
+<p><strong>PyPanel Flask</strong> • v1.0</p>
+</div>
+    
+</div>
+
+<!-- ABOUT BOX -->
+<div class="about-box" id="aboutBox">
+    <div class="about-window">
+        <div class="about-header">
+            About PhyPanel
+            <button onclick="closeAbout()">Close</button>
+        </div>
+        <div class="about-body">
+            <h3>PhyPanel</h3>
+            <p>Version: 1.0</p>
+            <p>Developer: Qubit</p>
+            <br>
+            <p>File Manager integrado ao painel local.</p>
+        </div>
+        <div class="about-footer">
+            <button onclick="closeAbout()">OK</button>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener("click", () => {
+    document.querySelectorAll(".menu-item").forEach(m => m.classList.remove("active"));
+});
+
+function toggleMenu(event, el){
+    event.stopPropagation();
+    const isActive = el.classList.contains("active");
+    document.querySelectorAll(".menu-item").forEach(m => m.classList.remove("active"));
+    if(!isActive){
+        el.classList.add("active");
+    }
+}
+
+async function api(url, options = {}){
+    try{
+        const res = await fetch(url, options);
+        if(!res.ok) throw new Error("Erro HTTP");
+        return await res.text();
+    }catch(e){
+        console.error(e);
+        return "Erro";
+    }
+}
+
+<!-- MySQL -->
+async function startMySQL(){
+    const res = await api("/start_mysql");
+    if(res) alert(res);
+    checkStatus();
+}
+
+async function stopMySQL(){
+    const res = await api("/stop_mysql");
+    if(res) alert(res);
+    checkStatus();
+}
+
+async function checkStatus(){
+    const status = await api("/mysql_status");
+    document.getElementById("status").innerText = "Status: " + status;
+}
+
+async function loadTables(){
+    try{
+        const res = await fetch("/tables");
+        const tables = await res.json();
+
+        const list = document.getElementById("tableList");
+        list.innerHTML = "";
+
+        if(tables.length === 0){
+            list.innerHTML = "<p>Nenhuma tabela encontrada</p>";
+            return;
+        }
+
+        tables.forEach(t=>{
+            const div = document.createElement("div");
+            div.className = "file-item";
+            div.innerHTML = `
+                🗄️ ${t}
+                <button onclick="deleteTable('${t}')">Delete</button>
+            `;
+            list.appendChild(div);
+        });
+
+    }catch(e){
+        console.error(e);
+    }
+}
+
+async function createTable(){
+    let name = prompt("Nome da tabela:");
+    if(!name) return;
+
+    await fetch("/create_table", {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body: JSON.stringify({name})
+    });
+
+    loadTables();
+}
+
+async function deleteTable(name){
+    if(confirm("Deletar tabela?")){
+        await fetch("/delete_table/"+name);
+        loadTables();
+    }
+}
+
+function logout(){
+    window.location.href = "/logout";
+}
+
+/* ABOUT */
+function openAbout(){
+    document.getElementById("aboutBox").style.display = "block";
+}
+
+function closeAbout(){
+    const box = document.getElementById("aboutBox");
+    if(!box) return;
+
+    // compatibilidade melhor entre browsers
+    box.style.display = "none";
+    box.classList.remove("active");
+}
+
+checkStatus();
+loadTables();
+</script>
+
+</body>
+</html>
