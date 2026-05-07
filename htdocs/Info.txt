@@ -1,6 +1,4 @@
-========================================
 // PyPanel Flask - htdocs Folder
-========================================
 
 This folder is used to store public files for the PyPanel Flask system.
 
