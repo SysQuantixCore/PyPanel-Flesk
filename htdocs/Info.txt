@@ -1,43 +1,20 @@
 ========================================
-PyPanel Flask - htdocs Folder
+// PyPanel Flask - htdocs Folder
 ========================================
 
 This folder is used to store public files for the PyPanel Flask system.
 
 Folder Purpose:
-----------------
 The "htdocs" folder works as a hosting directory for uploaded
 or generated files, similar to how Apache web servers operate.
 
-Files that can be stored here:
-------------------------------
-- User uploads
-- Images
-- HTML files
-- CSS and JavaScript
-- Downloads
-- Exported backups
-- Temporary public files
-
-Recommended Structure:
-----------------------
-htdocs/
-│
-├── uploads/
-├── images/
-├── downloads/
-├── temp/
-└── public/
-
 Security:
------------
 - Do not store sensitive files.
 - Validate upload file extensions.
 - Limit uploaded file sizes.
 - Block execution of dangerous scripts.
 
 Flask Example:
----------------
 app.py
 
 from flask import send_from_directory
@@ -45,4 +22,3 @@ from flask import send_from_directory
 @app.route('/htdocs/<path:filename>')
 def htdocs_files(filename):
     return send_from_directory('htdocs', filename)
-=======================================
