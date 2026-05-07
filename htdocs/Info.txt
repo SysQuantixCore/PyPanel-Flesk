@@ -6,13 +6,7 @@ This folder is used to store public files for the PyPanel Flask system.
 
 Folder Purpose:
 The "htdocs" folder works as a hosting directory for uploaded
-or generated files, similar to how Apache web servers operate.
-
-Security:
-- Do not store sensitive files.
-- Validate upload file extensions.
-- Limit uploaded file sizes.
-- Block execution of dangerous scripts.
+or generated files.
 
 Flask Example:
 app.py
