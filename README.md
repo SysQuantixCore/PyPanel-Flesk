@@ -11,5 +11,3 @@ Simple administrative panel developed with Flask, using modern interface, organi
 - CSS/JS static files
 - Easy personalization
 - Compatible with Python 3+
-
-AI-README.MD
