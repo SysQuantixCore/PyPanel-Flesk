@@ -1,59 +1,157 @@
+
 import os
 import re
+import subprocess
+
 from flask import Blueprint, jsonify, request
 from services.db import get_db
 from config import login_required
 
 mysql_bp = Blueprint("mysql", __name__)
 
+# CONFIGURAÇÃO DO MYSQL NO WINDOWS
+MYSQL_SERVICE = "MySQL80"
+
+
+# INICIAR MYSQL
 @mysql_bp.route("/start_mysql")
 @login_required
 def start_mysql():
-    os.system("sudo service mysql start")
-    return "MySQL iniciado"
 
+    try:
+        result = subprocess.run(
+            ["sc", "start", MYSQL_SERVICE],
+            capture_output=True,
+            text=True,
+            shell=False
+        )
+
+        if result.returncode == 0:
+            return "MySQL iniciado"
+
+        return (
+            result.stderr.strip()
+            or result.stdout.strip()
+            or "Não foi possível iniciar o MySQL"
+        ), 500
+
+    except Exception as e:
+        return f"Erro ao iniciar MySQL: {e}", 500
+
+
+# PARAR MYSQL
 @mysql_bp.route("/stop_mysql")
 @login_required
 def stop_mysql():
-    os.system("sudo service mysql stop")
-    return "MySQL parado"
 
+    try:
+        result = subprocess.run(
+            ["sc", "stop", MYSQL_SERVICE],
+            capture_output=True,
+            text=True,
+            shell=False
+        )
+
+        if result.returncode == 0:
+            return "MySQL parado"
+
+        return (
+            result.stderr.strip()
+            or result.stdout.strip()
+            or "Não foi possível parar o MySQL"
+        ), 500
+
+    except Exception as e:
+        return f"Erro ao parar MySQL: {e}", 500
+
+
+# STATUS MYSQL
 @mysql_bp.route("/mysql_status")
 @login_required
 def mysql_status():
-    result = os.popen("pgrep mysqld").read()
-    return "Online" if result.strip() else "Offline"
 
+    try:
+        db = get_db()
+        db.close()
+
+        return "Online"
+
+    except Exception as e:
+        print(f"Erro MySQL: {e}")
+        return "Offline"
+
+
+# LISTAR TABELAS
 @mysql_bp.route("/tables")
 @login_required
 def tables():
-    db = get_db()
-    cursor = db.cursor()
-    cursor.execute("SHOW TABLES")
-    return jsonify([t[0] for t in cursor.fetchall()])
 
+    try:
+        db = get_db()
+        cursor = db.cursor()
+
+        cursor.execute("SHOW TABLES")
+
+        result = [t[0] for t in cursor.fetchall()]
+
+        cursor.close()
+        db.close()
+
+        return jsonify(result)
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+# CRIAR TABELA
 @mysql_bp.route("/create_table", methods=["POST"])
 @login_required
 def create_table():
-    name = request.json["name"]
 
-    if not re.match(r'^[a-zA-Z0-9_]+$', name):
-        return "invalid name", 400
+    try:
+        name = request.json["name"]
 
-    db = get_db()
-    cursor = db.cursor()
-    cursor.execute(f"CREATE TABLE {name} (id INT AUTO_INCREMENT PRIMARY KEY)")
-    db.commit()
-    return "ok"
+        if not re.match(r'^[a-zA-Z0-9_]+$', name):
+            return "invalid name", 400
 
+        db = get_db()
+        cursor = db.cursor()
+
+        cursor.execute(
+            f"CREATE TABLE `{name}` (id INT AUTO_INCREMENT PRIMARY KEY)"
+        )
+
+        db.commit()
+
+        cursor.close()
+        db.close()
+
+        return "ok"
+
+    except Exception as e:
+        return str(e), 500
+
+
+# EXCLUIR TABELA
 @mysql_bp.route("/delete_table/<name>")
 @login_required
 def delete_table(name):
-    if not re.match(r'^[a-zA-Z0-9_]+$', name):
-        return "invalid name", 400
 
-    db = get_db()
-    cursor = db.cursor()
-    cursor.execute(f"DROP TABLE {name}")
-    db.commit()
-    return "ok"
+    try:
+        if not re.match(r'^[a-zA-Z0-9_]+$', name):
+            return "invalid name", 400
+
+        db = get_db()
+        cursor = db.cursor()
+
+        cursor.execute(f"DROP TABLE `{name}`")
+
+        db.commit()
+
+        cursor.close()
+        db.close()
+
+        return "ok"
+
+    except Exception as e:
+        return str(e), 500
