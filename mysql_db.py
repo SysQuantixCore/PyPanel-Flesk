@@ -9,8 +9,19 @@ def get_db():
         database="test"
     )
 
+import subprocess
+
 def start_mysql():
-    subprocess.Popen("mysqld", shell=True)
+    try:
+        subprocess.run(
+            ["net", "start", "MySQL80"],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        return True
+    except subprocess.CalledProcessError:
+        return False
 
 def stop_mysql():
     subprocess.Popen("taskkill /F /IM mysqld.exe", shell=True)
@@ -20,7 +31,9 @@ def status_mysql():
         db = get_db()
         db.close()
         return "Online"
-    except:
+
+    except Exception as e:
+        print(f"Erro MySQL: {e}")
         return "Offline"
 
 def get_tables():
