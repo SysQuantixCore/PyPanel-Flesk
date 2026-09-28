@@ -133,6 +133,63 @@ button:hover {
     background: #555;
 }
 
+/* TUTORIAL MYSQL */
+.mysql-guide {
+    margin-top: 25px;
+    padding: 20px;
+    background: #172a33;
+    border: 1px solid #31515f;
+    border-radius: 10px;
+    color: #eaf2f5;
+}
+
+.mysql-guide h3 {
+    color: #4fc3f7;
+    margin-bottom: 12px;
+}
+
+.mysql-guide h4 {
+    color: #ffffff;
+    margin: 18px 0 8px;
+}
+
+.mysql-guide p {
+    color: #cbd5da;
+    line-height: 1.6;
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+.mysql-guide ol {
+    margin-left: 22px;
+    color: #cbd5da;
+    line-height: 1.7;
+}
+
+.mysql-guide pre {
+    background: #080d10;
+    color: #9ee7b0;
+    padding: 12px;
+    border-radius: 6px;
+    overflow-x: auto;
+    margin: 10px 0;
+    border: 1px solid #263b44;
+}
+
+.mysql-guide code {
+    font-family: Consolas, monospace;
+    font-size: 13px;
+}
+
+.mysql-guide .guide-warning {
+    background: #3a2d16;
+    border-left: 4px solid #f0ad4e;
+    padding: 12px;
+    border-radius: 4px;
+    color: #ffe2a8;
+    margin-top: 15px;
+}
+
 /* 🔹 ABOUT BOX */
 .about-box {
     position: fixed;
@@ -267,18 +324,82 @@ button:hover {
 <div class="topbar">
 <h2>MySQL Manager</h2>
 <a href="/logout" class="logout">Logout</a>
-</div>    
+</div>
 
 <p id="status">Status: Carregando...</p>
 
 <div class="file-list" id="tableList"></div>
+
+<!-- TUTORIAL DE INSTALAÇÃO DO SERVIÇO MYSQL -->
+<div class="mysql-guide">
+    <h3>Instalar serviço MySQL no Windows</h3>
+
+    <p>
+        Se o MySQL já estiver instalado no computador, mas não aparecer como
+        serviço do Windows, siga as etapas abaixo para registrá-lo.
+    </p>
+
+    <h4>1. Abra o PowerShell como administrador</h4>
+    <ol>
+        <li>Abra o menu Iniciar do Windows.</li>
+        <li>Pesquise por PowerShell.</li>
+        <li>Clique com o botão direito e selecione <strong>Executar como administrador</strong>.</li>
+    </ol>
+
+    <h4>2. Localize o executável mysqld.exe</h4>
+    <p>Execute o comando abaixo para verificar se o MySQL está disponível no PATH:</p>
+
+    <pre><code>where.exe mysqld</code></pre>
+
+    <p>
+        Se o comando não encontrar o arquivo, localize a pasta de instalação.
+        Um caminho comum é:
+    </p>
+
+    <pre><code>C:\Program Files\MySQL\MySQL Server 8.0\bin\mysqld.exe</code></pre>
+
+    <h4>3. Registre o serviço MySQL</h4>
+    <p>
+        Ajuste o caminho do executável conforme a instalação do seu computador
+        e execute:
+    </p>
+
+    <pre><code>&amp; "C:\Program Files\MySQL\MySQL Server 8.0\bin\mysqld.exe" --install MySQL80</code></pre>
+
+    <h4>4. Inicie o serviço</h4>
+
+    <pre><code>Start-Service MySQL80</code></pre>
+
+    <h4>5. Verifique o status</h4>
+
+    <pre><code>Get-Service MySQL80</code></pre>
+
+    <p>
+        Se o serviço estiver funcionando, o status deverá aparecer como
+        <strong>Running</strong>.
+    </p>
+
+    <h4>6. Configure a inicialização automática</h4>
+
+    <pre><code>Set-Service MySQL80 -StartupType Automatic</code></pre>
+
+    <div class="guide-warning">
+        <strong>Atenção:</strong>
+        Este procedimento registra um serviço do Windows para uma instalação
+        existente do MySQL. Ele não instala o servidor MySQL, não cria o diretório
+        de dados e não configura a senha do usuário root. Se o serviço já estiver
+        registrado, não execute novamente o comando <code>--install</code>.
+        O nome <code>MySQL80</code> deve corresponder ao nome configurado no
+        backend Flask.
+    </div>
+</div>
 
 </div>
 
 <div class="footer">
 <p><strong>PyPanel Flask</strong> • v1.0</p>
 </div>
-    
+
 </div>
 
 <!-- ABOUT BOX -->
@@ -326,7 +447,7 @@ async function api(url, options = {}){
     }
 }
 
-<!-- MySQL -->
+// MySQL
 async function startMySQL(){
     const res = await api("/start_mysql");
     if(res) alert(res);

@@ -133,20 +133,7 @@ button:hover {
     background: #555;
 }
 
-.footer {
-    background: #111;
-    border-top: 1px solid #333;
-    padding: 15px;
-    text-align: center;
-    font-size: 14px;
-    color: #aaa;
-}
-
-.footer strong {
-    color: #fff;
-}
-
-/* ABOUT */
+/* 🔹 ABOUT BOX (Windows style) */
 .about-box {
     position: fixed;
     inset: 0;
@@ -163,7 +150,6 @@ button:hover {
     border-radius: 6px;
     margin: auto;
     margin-top: 10%;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
     display: flex;
     flex-direction: column;
 }
@@ -175,6 +161,24 @@ button:hover {
     font-weight: bold;
     display: flex;
     justify-content: space-between;
+}
+
+.about-header button {
+    background: #ff4b5c;
+    border: none;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 13px;
+
+    padding: 6px 12px;
+    border-radius: 6px;
+
+    transition: 0.2s;
+}
+
+.about-header button:hover {
+    background: #ff2f44;
 }
 
 .about-body {
@@ -194,6 +198,77 @@ button:hover {
     background: #e0e0e0;
     cursor: pointer;
 }
+
+.footer {
+    background: #111;
+    border-top: 1px solid #333;
+    padding: 15px;
+    text-align: center;
+    font-size: 14px;
+    color: #aaa;
+}
+
+.footer strong {
+    color: #fff;
+}
+
+/* TUTORIAL GOOGLE OAUTH */
+.google-guide {
+    margin-top: 25px;
+    padding: 20px;
+    background: #172a33;
+    border: 1px solid #31515f;
+    border-radius: 10px;
+    color: #eaf2f5;
+}
+
+.google-guide h3 {
+    color: #4fc3f7;
+    margin-bottom: 12px;
+}
+
+.google-guide h4 {
+    color: #fff;
+    margin: 18px 0 8px;
+}
+
+.google-guide p {
+    color: #cbd5da;
+    line-height: 1.6;
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+.google-guide ol {
+    margin-left: 22px;
+    color: #cbd5da;
+    line-height: 1.7;
+}
+
+.google-guide pre {
+    background: #080d10;
+    color: #9ee7b0;
+    padding: 12px;
+    border-radius: 6px;
+    overflow-x: auto;
+    margin: 10px 0;
+    border: 1px solid #263b44;
+}
+
+.google-guide code {
+    font-family: Consolas, monospace;
+    font-size: 13px;
+}
+
+.google-guide .guide-warning {
+    background: #3a2d16;
+    border-left: 4px solid #f0ad4e;
+    padding: 12px;
+    border-radius: 4px;
+    color: #ffe2a8;
+    margin-top: 15px;
+}
+
 </style>
 </head>
 
@@ -249,13 +324,90 @@ button:hover {
 
 <div class="file-list" id="tableList"></div>
 
+
+<!-- TUTORIAL DE CONFIGURAÇÃO GOOGLE OAUTH -->
+<div class="google-guide">
+    <h3>Configurar autenticação OAuth do Google Drive</h3>
+
+    <p>
+        Esta mensagem aparece porque o PyPanel ainda não possui uma sessão OAuth
+        válida. Siga as etapas abaixo para preparar a integração com o Google Drive.
+    </p>
+
+    <h4>1. Acesse o Google Cloud Console</h4>
+    <ol>
+        <li>Entre em <a href="https://console.cloud.google.com/" target="_blank" rel="noopener noreferrer">Google Cloud Console</a>.</li>
+        <li>Crie um projeto ou selecione um projeto existente.</li>
+        <li>Confirme que está trabalhando no projeto correto antes de configurar a API.</li>
+    </ol>
+
+    <h4>2. Ative a Google Drive API</h4>
+    <ol>
+        <li>No menu do Google Cloud Console, abra APIs e serviços.</li>
+        <li>Acesse Biblioteca, procure por <strong>Google Drive API</strong>.</li>
+        <li>Abra a API e clique em Ativar.</li>
+    </ol>
+
+    <h4>3. Configure a tela de consentimento OAuth</h4>
+    <ol>
+        <li>Em APIs e serviços, abra Tela de consentimento OAuth.</li>
+        <li>Selecione o tipo de público adequado ao seu uso (interno ou externo, conforme sua conta e projeto).</li>
+        <li>Informe o nome do aplicativo e o e-mail de suporte solicitado.</li>
+        <li>Durante os testes, adicione sua conta Google como usuário de teste, se o Google solicitar.</li>
+        <li>Configure o escopo do Google Drive necessário para a função de backup.</li>
+    </ol>
+
+    <h4>4. Crie as credenciais OAuth</h4>
+    <ol>
+        <li>Abra APIs e serviços → Credenciais.</li>
+        <li>Clique em Criar credenciais → ID do cliente OAuth.</li>
+        <li>Selecione <strong>Aplicativo da Web</strong>.</li>
+        <li>Cadastre a origem JavaScript e o URI de redirecionamento autorizados conforme os endereços usados pelo seu Flask.</li>
+        <li>Copie o ID do cliente e o segredo do cliente para a configuração segura do backend.</li>
+    </ol>
+
+    <h4>5. Configure o Flask</h4>
+    <p>
+        O backend precisa implementar o fluxo OAuth: redirecionar para o Google,
+        receber o retorno (callback), validar a resposta e armazenar os tokens
+        com segurança. Configure no ambiente do servidor os valores fornecidos
+        pelo Google, por exemplo:
+    </p>
+
+    <pre><code>GOOGLE_CLIENT_ID=seu_client_id
+GOOGLE_CLIENT_SECRET=seu_client_secret
+GOOGLE_REDIRECT_URI=http://127.0.0.1:5000/google_callback</code></pre>
+
+    <p>
+        O endereço <code>/google_callback</code> é apenas um exemplo. Ele deve
+        corresponder exatamente à rota de retorno implementada no seu Flask e
+        ao URI cadastrado no Google Cloud Console.
+    </p>
+
+    <h4>6. Reinicie o PyPanel e teste</h4>
+    <ol>
+        <li>Reinicie o servidor Flask após configurar as credenciais.</li>
+        <li>Use Google Drive → Connect para iniciar a autorização.</li>
+        <li>Conclua a autorização na página do Google e retorne ao PyPanel.</li>
+        <li>Use Google Drive → Status para verificar a conexão.</li>
+    </ol>
+
+    <div class="guide-warning">
+        <strong>Importante:</strong>
+        Este tutorial prepara a configuração no Google Cloud, mas não implementa
+        OAuth automaticamente. As rotas Flask <code>/google_connect</code>,
+        <code>/google_status</code> e a rota de callback precisam executar o fluxo
+        OAuth real. Não coloque o segredo do cliente diretamente no HTML ou
+        JavaScript, nem publique esse valor no repositório.
+    </div>
 </div>
 
+
+</div>
 <div class="footer">
-<p><strong>PhyPanel HTML</strong></p>
-<p>Version: 1.0 | By: Qubit</p>
+<p><strong>PyPanel Flask</strong></p>
+<p>Version: 1.0 | Web</p>
 </div>
-
 </div>
 
 <!-- ABOUT -->
@@ -266,11 +418,13 @@ button:hover {
             <button onclick="closeAbout()">✖</button>
         </div>
         <div class="about-body">
-            <h3>PhyPanel</h3>
+            <h3>PyPanel Flesk</h3>
             <p>Version: 1.0</p>
+            <!-- BROWSER INFO -->
+            <p id="browserInfo">Browser: Detectando...</p>            
             <p>Developer: Qubit</p>
             <br>
-            <p>Google Drive Manager integrado ao painel local.</p>
+            <p>Local hosting panel builtclass="" with Python + Flask.</p>
         </div>
         <div class="about-footer">
             <button onclick="closeAbout()">OK</button>
@@ -304,21 +458,65 @@ async function api(url, options = {}){
 }
 
 /* GOOGLE DRIVE */
+/* GOOGLE DRIVE */
 async function connectDrive(){
-    const res = await api("/google_connect");
-    if(res) alert(res);
-    checkDriveStatus();
+    try {
+        const response = await fetch("/google_connect");
+        const data = await response.json();
+
+        if(data.redirect){
+            window.location.href = data.redirect;
+            return;
+        }
+
+        alert(data.message || "Não foi possível conectar ao Google Drive.");
+        await checkDriveStatus();
+
+    } catch(error) {
+        console.error("Erro ao conectar Google Drive:", error);
+        alert("Erro ao conectar com o servidor.");
+    }
 }
 
 async function uploadToDrive(){
-    const res = await api("/google_backup", { method: "POST" });
-    if(res) alert(res);
-    checkDriveStatus();
+    try {
+        const response = await fetch("/google_backup", {
+            method: "POST"
+        });
+
+        const data = await response.json();
+
+        alert(data.message || "Operação de backup concluída.");
+        await checkDriveStatus();
+
+    } catch(error) {
+        console.error("Erro no backup:", error);
+        alert("Erro ao realizar backup.");
+    }
 }
 
 async function checkDriveStatus(){
-    const status = await api("/google_status");
-    document.getElementById("status").innerText = "Status: " + status;
+    const statusElement = document.getElementById("status");
+
+    try {
+        const response = await fetch("/google_status");
+        const data = await response.json();
+
+        if(data.connected){
+            statusElement.innerText = "Status: Conectado ao Google Drive";
+            statusElement.style.color = "#4caf50";
+        } else {
+            statusElement.innerText = "Status: " + (
+                data.message || "Google Drive desconectado."
+            );
+            statusElement.style.color = "#ffb74d";
+        }
+
+    } catch(error) {
+        console.error("Erro ao consultar Google Drive:", error);
+        statusElement.innerText = "Status: Erro ao consultar conexão.";
+        statusElement.style.color = "#ff4b5c";
+    }
 }
 
 /* FILE LIST (mantido) */
@@ -368,13 +566,56 @@ function logout(){
     window.location.href = "/logout";
 }
 
+// Browser Info
+function getBrowserInfo() {
+
+    const ua = navigator.userAgent;
+
+    let browser = "Unknown";
+
+    if (ua.includes("Firefox")) {
+        browser = "Mozilla Firefox";
+    } 
+    else if (ua.includes("SamsungBrowser")) {
+        browser = "Samsung Internet";
+    } 
+    else if (ua.includes("Opera") || ua.includes("OPR")) {
+        browser = "Opera";
+    } 
+    else if (ua.includes("Edg")) {
+        browser = "Microsoft Edge";
+    } 
+    else if (ua.includes("Chrome")) {
+        browser = "Google Chrome";
+    } 
+    else if (ua.includes("Safari")) {
+        browser = "Safari";
+    }
+
+    const browserInfo = document.getElementById("browserInfo");
+
+    if(browserInfo){
+        browserInfo.innerHTML = `Browser: ${browser}`;
+    }
+}
+
+/* EXECUTA */
+document.addEventListener("DOMContentLoaded", () => {
+    getBrowserInfo();
+});
+
 /* ABOUT */
 function openAbout(){
     document.getElementById("aboutBox").style.display = "block";
+    log("Opened About Box");
 }
 
 function closeAbout(){
-    document.getElementById("aboutBox").style.display = "none";
+    const box = document.getElementById("aboutBox");
+    if(!box) return;
+
+    box.style.display = "none";
+    box.classList.remove("active");
 }
 
 /* INIT */
