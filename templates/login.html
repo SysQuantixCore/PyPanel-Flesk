@@ -19,7 +19,7 @@ body {
     min-height: 100dvh;
     display: flex;
     flex-direction: column;
-    background: radial-gradient(circle at top, #1f2a37, #0f172a);
+    background: #0f2027;
     color: #fff;
 }
 
@@ -127,12 +127,92 @@ button:active {
     background: #c8c8c8;
 }
 
+/* LOGBOX */
+.logbox {
+    width: 350px;
+    min-height: 85px;
+
+    padding: 12px 14px;
+
+    background: rgba(0, 0, 0, 0.88);
+    border: 1px solid rgba(255,255,255,0.08);
+
+    border-radius: 5px;
+
+    color: #d6d6d6;
+    font-size: 12px;
+
+    overflow-y: auto;
+}
+
+.logbox-title {
+    margin-bottom: 8px;
+
+    color: #ffffff;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    letter-spacing: 0.5px;
+
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    padding-bottom: 6px;
+}
+
+.log-line {
+    margin-bottom: 5px;
+
+    font-family: Consolas, monospace;
+
+    opacity: 0.9;
+}
+
+/* LOGBOX */
+.logbox {
+    width: 350px;
+    min-height: 85px;
+
+    padding: 12px 14px;
+
+    background: rgba(0, 0, 0, 0.88);
+    border: 1px solid rgba(255,255,255,0.08);
+
+    border-radius: 5px;
+
+    color: #d6d6d6;
+    font-size: 12px;
+
+    overflow-y: auto;
+}
+
+.logbox-title {
+    margin-bottom: 8px;
+
+    color: #ffffff;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    letter-spacing: 0.5px;
+
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    padding-bottom: 6px;
+}
+
+.log-line {
+    margin-bottom: 5px;
+
+    font-family: Consolas, monospace;
+
+    opacity: 0.9;
+}
+
 .footer {
-    background: rgba(0,0,0,0.4);
-    border-top: 1px solid rgba(255,255,255,0.05);
+    background: #111;
+    border-top: 1px solid #333;
     padding: 15px;
     text-align: center;
-    font-size: 13px;
+    font-size: 14px;
     color: #aaa;
 }
 
@@ -166,12 +246,55 @@ button:active {
             </form>
         </div>
 
+        <!-- LOGBOX -->
+        <div class="logbox">
+
+        <div class="logbox-title">
+        System Log
+        </div>
+
+        <div class="log-line" id="server-status">
+        [CHECK] Verificando servidor...
+        </div>
+        <div class="log-line" id="connection-status">
+        [WAIT] Aguardando resposta...
+        </div>
+        </div>
+        </div>
     </div>
 </div>
+<script>
+async function checkServer() {
 
+    const status =
+        document.getElementById("server-status");
+
+    try {
+
+        const response =
+            await fetch("/status");
+
+        const data =
+            await response.json();
+
+        status.innerHTML =
+            `[OK] ${data.server} online`;
+
+    } catch {
+
+        status.innerHTML =
+            "[OFFLINE] Servidor desconectado";
+
+    }
+}
+
+checkServer();
+
+setInterval(checkServer, 5000);
+</script>
 <div class="footer">
-    <p><strong>PyPanel Flask</strong> • v1.0</p>
+<p><strong>PyPanel Flask</strong></p>
+<p>Version: 1.0 | Mobile</p>
 </div>
-
 </body>
 </html>

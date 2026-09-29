@@ -132,7 +132,6 @@ body {
     overflow: hidden;
 }
 
-/* 🔥 MELHORADO */
 .file-item {
     display: flex;
     align-items: center;
@@ -158,7 +157,6 @@ body {
     font-size: 12px;
 }
 
-/* 🔥 BOTÕES MAIS BONITOS */
 .file-actions {
     display: flex;
     gap: 8px;
@@ -173,7 +171,6 @@ body {
     transition: 0.2s;
 }
 
-/* Open */
 .file-actions button:first-child {
     background: #0078d7;
     color: #fff;
@@ -183,7 +180,6 @@ body {
     background: #005fa3;
 }
 
-/* Delete */
 .file-actions button:last-child {
     background: #ff4b5c;
     color: #fff;
@@ -193,7 +189,6 @@ body {
     background: #d63b4a;
 }
 
-/* 🔥 GRID MODE FIX */
 .grid-mode .file-item {
     flex-direction: column;
     align-items: center;
@@ -217,30 +212,13 @@ body {
     width: 70px;
 }
 
-.footer {
-    background: #111;
-    border-top: 1px solid #333;
-    padding: 15px;
-    text-align: center;
-    font-size: 14px;
-    color: #aaa;
-}
-
-.footer strong {
-    color: #fff;
-}
-
-/* 🔹 SERVER LOG (Windows Form style) */
 .server-log {
     position: fixed;
     inset: 0;
-
     background: rgba(0,0,0,0.35);
-
-    display: none; /* controla via JS */
+    display: none;
     align-items: center;
     justify-content: center;
-
     z-index: 9999;
 }
 
@@ -251,14 +229,11 @@ body {
 .server-log-panel {
     width: 700px;
     height: 500px;
-
     background: #f0f0f0;
     border: 1px solid #888;
     border-radius: 6px;
-
     margin: auto;
     margin-top: 10%;
-
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -267,10 +242,8 @@ body {
 .server-log-header {
     background: #0078d7;
     color: white;
-
     padding: 8px 10px;
     font-weight: bold;
-
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -283,10 +256,8 @@ body {
     font-weight: bold;
     cursor: pointer;
     font-size: 13px;
-
     padding: 6px 12px;
     border-radius: 6px;
-
     transition: 0.2s;
 }
 
@@ -297,16 +268,12 @@ body {
 .server-log-body {
     flex: 1;
     padding: 12px;
-
     background: #ffffff;
     color: #000;
-
     font-size: 13px;
-
     overflow-y: auto;
 }
 
-/* 🔹 ABOUT BOX */
 .about-box {
     position: fixed;
     inset: 0;
@@ -343,10 +310,8 @@ body {
     font-weight: bold;
     cursor: pointer;
     font-size: 13px;
-
     padding: 6px 12px;
     border-radius: 6px;
-
     transition: 0.2s;
 }
 
@@ -370,6 +335,19 @@ body {
     border: 1px solid #888;
     background: #e0e0e0;
     cursor: pointer;
+}
+
+.footer {
+    background: #111;
+    border-top: 1px solid #333;
+    padding: 15px;
+    text-align: center;
+    font-size: 14px;
+    color: #aaa;
+}
+
+.footer strong {
+    color: #fff;
 }
 </style>
 </head>
@@ -440,15 +418,12 @@ body {
 <div class="file-list" id="fileList"></div>
 
 </div>
-
 <div class="footer">
-<p><strong>PhyPanel HTML</strong></p>
-<p>Version: 1.0 | By: Qubit</p>
+<p><strong>PyPanel Flask</strong></p>
+<p>Version: 1.0 | Web</p>
+</div>
 </div>
 
-</div>
-
-<!-- SERVER LOG -->
 <div class="server-log" id="serverLog">
     <div class="server-log-panel">
         <div class="server-log-header">
@@ -459,7 +434,6 @@ body {
     </div>
 </div>
 
-<!-- ABOUT BOX -->
 <div class="about-box" id="aboutBox">
     <div class="about-window">
         <div class="about-header">
@@ -467,11 +441,17 @@ body {
             <button onclick="closeAbout()">Close</button>
         </div>
         <div class="about-body">
-            <h3>PhyPanel</h3>
+<h3>PyPanel Flesk</h3>
             <p>Version: 1.0</p>
+            <!-- BROWSER INFO -->
+            <p id="browserInfo">Browser: Detectando...</p>            
             <p>Developer: Qubit</p>
             <br>
-            <p>File Manager integrado ao painel local.</p>
+            <p>
+            A lightweight and flexible web-based application built with Python
+            and Flask, providing an intuitive interface for local management
+            and system administration.
+            </p> 
         </div>
         <div class="about-footer">
             <button onclick="closeAbout()">OK</button>
@@ -526,7 +506,7 @@ function renderFiles(){
         list.innerHTML += `
     <div class="file-item">
         <div class="file-name">
-            <div>📄 ${f.name}</div>
+            <div>${f.name}</div>
             <span>${date}</span>
         </div>
 
@@ -538,9 +518,23 @@ function renderFiles(){
 `;
     });
 }
+
 const DEBUG_LOG = true;
+
 function openFile(name){
-    window.open(currentPath + "/" + name, "_blank");
+
+    const fullPath = currentPath + "/" + name;
+
+    const encodedPath = fullPath
+        .split("/")
+        .map(part => encodeURIComponent(part))
+        .join("/");
+
+    if(name.includes(".")){
+        window.open(encodedPath, "_blank");
+    }else{
+        changePath(fullPath);
+    }
 }
 
 let currentPath = "/htdocs";
@@ -582,7 +576,6 @@ function changePath(path){
 
     document.getElementById("pathDisplay").innerText = currentPath;
 
-    // 🔥 Aqui você pode adaptar pro backend depois
     fetch("/api/files?path=" + encodeURIComponent(currentPath))
         .then(res => res.json())
         .then(data => {
@@ -594,37 +587,66 @@ function changePath(path){
         });
 }
 
-/* 🔥 DELETE CORRIGIDO */
 async function deleteFile(name){
+
     if(!confirm("Deletar arquivo?")) return;
 
     try{
-        const res = await fetch("/delete/" + encodeURIComponent(name));
+        let fullPath = currentPath.replace("/htdocs/", "");
+
+        if(fullPath === "/htdocs"){
+            fullPath = "";
+        }
+
+        if(fullPath && !fullPath.endsWith("/")){
+            fullPath += "/";
+        }
+
+        fullPath += name;
+
+        const res = await fetch(
+            "/delete/" + encodeURIComponent(fullPath)
+        );
 
         if(!res.ok){
+
             alert("Erro ao deletar arquivo");
+
             console.error("Erro:", res.status);
+
             return;
         }
 
         serverLog("Arquivo deletado: " + name);
+
         fetchFiles();
 
     }catch(e){
+
         console.error(e);
+
         alert("Falha na conexão");
+
         serverLog("Erro ao deletar: " + name);
     }
 }
 
 function upload(){
+
     let input = document.createElement("input");
     input.type = "file";
 
     input.onchange = async () => {
+
         let file = input.files[0];
+        if(!file) return;
+
         let formData = new FormData();
+
         formData.append("file", file);
+
+        /* CAMINHO ATUAL */
+        formData.append("path", currentPath);
 
         await fetch("/upload", {
             method: "POST",
@@ -670,7 +692,6 @@ function logout(){
     window.location.href = "/logout";
 }
 
-// VIEW MODE
 function setView(mode){
     const list = document.getElementById("fileList");
 
@@ -686,15 +707,59 @@ function setView(mode){
     }
 }
 
+fetchFiles();
+
+// Browser Info
+function getBrowserInfo() {
+
+    const ua = navigator.userAgent;
+
+    let browser = "Unknown";
+
+    if (ua.includes("Firefox")) {
+        browser = "Mozilla Firefox";
+    } 
+    else if (ua.includes("SamsungBrowser")) {
+        browser = "Samsung Internet";
+    } 
+    else if (ua.includes("Opera") || ua.includes("OPR")) {
+        browser = "Opera";
+    } 
+    else if (ua.includes("Edg")) {
+        browser = "Microsoft Edge";
+    } 
+    else if (ua.includes("Chrome")) {
+        browser = "Google Chrome";
+    } 
+    else if (ua.includes("Safari")) {
+        browser = "Safari";
+    }
+
+    const browserInfo = document.getElementById("browserInfo");
+
+    if(browserInfo){
+        browserInfo.innerHTML = `Browser: ${browser}`;
+    }
+}
+
+/* EXECUTA */
+document.addEventListener("DOMContentLoaded", () => {
+    getBrowserInfo();
+});
+
+/* ABOUT */
 function openAbout(){
     document.getElementById("aboutBox").style.display = "block";
+    log("Opened About Box");
 }
 
 function closeAbout(){
-    document.getElementById("aboutBox").style.display = "none";
-}
+    const box = document.getElementById("aboutBox");
+    if(!box) return;
 
-fetchFiles();
+    box.style.display = "none";
+    box.classList.remove("active");
+}
 </script>
 
 </body>
