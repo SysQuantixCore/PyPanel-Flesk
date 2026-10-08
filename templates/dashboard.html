@@ -1,478 +1,2208 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin Panel</title>
-<!-- VERSION: MOBILE -->
-<style>
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: Arial, sans-serif;
-}
 
-body {
-    display: flex;
-    height: 100vh;
-    background: #0f2027;
-    color: #fff;
-}
+    <meta charset="UTF-8">
 
-.main {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-}
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
 
-.panel {
-    width: 100%;
-    background: #f3f3f3;
-    border-bottom: 1px solid #cfcfcf;
-}
+    <title>PyPanel Flask</title>
 
-.menu {
-    display: flex;
-    padding-left: 10px;
-}
 
-.menu-item {
-    position: relative;
-    padding: 8px 14px;
-    cursor: pointer;
-    color: #000;
-    font-size: 14px;
-    user-select: none;
-}
+    <style>
 
-.menu-item:hover {
-    background: #e5f1fb;
-    border: 1px solid #0078d7;
-    border-bottom: none;
-}
+        /* =========================================================
+           RESET
+        ========================================================= */
 
-.submenu {
-    display: none;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    background: #ffffff;
-    border: 1px solid #cfcfcf;
-    min-width: 180px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-    z-index: 100;
-    padding: 4px 0;
-}
+        * {
+            box-sizing: border-box;
+        }
 
-.menu-item.active .submenu {
-    display: block;
-}
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
 
-.submenu div, .submenu a {
-    padding: 8px 12px;
-    font-size: 14px;
-    color: #000;
-    display: block;
-    text-decoration: none;
-}
+            overflow: hidden;
 
-.submenu div:hover, .submenu a:hover {
-    background: #0078d7;
-    color: #fff;
-}
+            font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+            font-size: 13px;
 
-.separator {
-    height: 1px;
-    background: #ddd;
-    margin: 5px 0;
-}
+            background: #f0f0f0;
+            color: #111;
+        }
 
-.content {
-    padding: 30px;
-    flex: 1;
-}
+        body {
+            transition: 0.2s;
+        }
 
-.topbar {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 20px;
-}
 
-.topbar h2{
-    font-size:16px;
-}
+        /* =========================================================
+           WINDOW
+        ========================================================= */
 
-.logout {
-    text-decoration: none;
-    padding: 8px 15px;
-    border-radius: 8px;
-    background: #ff4b5c;
-    color: white;
-}
+        .window {
+            width: 100%;
+            height: 100vh;
 
-.card {
-    display: block;
-    padding: 20px;
-    border-radius: 10px;
-    text-align: center;
-    cursor: pointer;
-    color: white;
-    text-decoration: none;
-    background: transparent;
-    transition: 0.2s;
-}
+            display: flex;
+            flex-direction: column;
+        }
 
-.card:hover {
-    background: #1e1e1e;
-}
 
-/* 🔹 SERVER LOG (Windows Form style) */
-.server-log {
-    position: fixed;
-    inset: 0;
+        /* =========================================================
+           TITLE BAR
+        ========================================================= */
 
-    background: rgba(0,0,0,0.35);
+        .titlebar {
+            height: 32px;
+            min-height: 32px;
 
-    display: none; /* controla via JS */
-    align-items: center;
-    justify-content: center;
+            display: flex;
+            align-items: center;
 
-    z-index: 9999;
-}
+            background: #0078d7;
+            color: #fff;
 
-.server-log.active {
-    display: flex;
-}
+            user-select: none;
+        }
 
-.server-log-panel {
-    width: 700px;
-    height: 500px;
+        .title-icon {
+            width: 32px;
+            text-align: center;
+            font-size: 15px;
+        }
 
-    background: #f0f0f0;
-    border: 1px solid #888;
-    border-radius: 6px;
+        .title {
+            flex: 1;
+            font-size: 13px;
+        }
 
-    margin: auto;
-    margin-top: 10%;
+        .window-buttons {
+            height: 100%;
+            display: flex;
+        }
 
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-}
+        .window-button {
+            width: 46px;
+            height: 100%;
 
-.server-log-header {
-    background: #0078d7;
-    color: white;
+            border: 0;
 
-    padding: 8px 10px;
-    font-weight: bold;
+            background: transparent;
+            color: #fff;
 
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
+            font-size: 15px;
 
-.server-log-header button {
-    background: #ff4b5c;
-    border: none;
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
-    font-size: 13px;
+            cursor: pointer;
+        }
 
-    padding: 6px 12px;
-    border-radius: 6px;
+        .window-button:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
 
-    transition: 0.2s;
-}
+        .window-button.close:hover {
+            background: #e81123;
+        }
 
-.server-log-header button:hover {
-    background: #ff2f44;
-}
 
-.server-log-body {
-    flex: 1;
-    padding: 12px;
+        /* =========================================================
+           MENU
+        ========================================================= */
 
-    background: #ffffff;
-    color: #000;
+        .menu {
+            height: 28px;
+            min-height: 28px;
 
-    font-size: 13px;
+            display: flex;
+            align-items: center;
 
-    overflow-y: auto;
-}
+            background: #f5f5f5;
 
-/* 🔹 ABOUT BOX (Windows style) */
-.about-box {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.4);
-    display: none;
-    z-index: 9999;
-}
+            border-bottom: 1px solid #c8c8c8;
+        }
 
-.about-window {
-    width: 400px;
-    background: #f0f0f0;
-    color: #000;
-    border: 1px solid #888;
-    border-radius: 6px;
-    margin: auto;
-    margin-top: 10%;
-    display: flex;
-    flex-direction: column;
-}
+        .menu-item {
+            position: relative;
 
-.about-header {
-    background: #0078d7;
-    color: white;
-    padding: 8px 10px;
-    font-weight: bold;
-    display: flex;
-    justify-content: space-between;
-}
+            padding: 5px 12px;
 
-.about-header button {
-    background: #ff4b5c;
-    border: none;
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
-    font-size: 13px;
+            cursor: pointer;
+            user-select: none;
+        }
 
-    padding: 6px 12px;
-    border-radius: 6px;
+        .menu-item:hover,
+        .menu-item.active {
+            background: #e5f1fb;
+        }
 
-    transition: 0.2s;
-}
+        .submenu {
+            position: absolute;
 
-.about-header button:hover {
-    background: #ff2f44;
-}
+            top: 100%;
+            left: 0;
 
-.about-body {
-    padding: 20px;
-    font-size: 14px;
-}
+            display: none;
 
-.about-footer {
-    padding: 10px;
-    text-align: right;
-    border-top: 1px solid #ccc;
-}
+            min-width: 180px;
 
-.about-footer button {
-    padding: 6px 14px;
-    border: 1px solid #888;
-    background: #e0e0e0;
-    cursor: pointer;
-}
+            padding: 4px 0;
 
-.footer {
-    background: #111;
-    border-top: 1px solid #333;
-    padding: 15px;
-    text-align: center;
-    font-size: 14px;
-    color: #aaa;
-}
+            background: #fff;
 
-.footer strong {
-    color: #fff;
-}    
-</style>
+            border: 1px solid #cfcfcf;
+
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+
+            z-index: 1000;
+        }
+
+        .menu-item.active .submenu {
+            display: block;
+        }
+
+        .submenu-item {
+            padding: 8px 12px;
+
+            color: #000;
+
+            cursor: pointer;
+        }
+
+        .submenu-item:hover {
+            background: #0078d7;
+            color: #fff;
+        }
+
+
+        /* =========================================================
+           TOOLBAR
+        ========================================================= */
+
+        .toolbar {
+            height: 38px;
+            min-height: 38px;
+
+            display: flex;
+            align-items: center;
+
+            gap: 5px;
+
+            padding: 4px 7px;
+
+            background: #f5f5f5;
+
+            border-bottom: 1px solid #c8c8c8;
+        }
+
+        .tool-button {
+            height: 28px;
+
+            padding: 0 10px;
+
+            border: 1px solid #b8b8b8;
+
+            background: #fff;
+
+            cursor: pointer;
+        }
+
+        .tool-button:hover {
+            background: #e8f1fb;
+
+            border-color: #0078d7;
+        }
+
+        .search {
+            width: 250px;
+            height: 27px;
+
+            margin-left: auto;
+
+            padding: 4px 8px;
+
+            border: 1px solid #aaa;
+
+            outline: none;
+        }
+
+        .search:focus {
+            border-color: #0078d7;
+        }
+
+
+        /* =========================================================
+           MAIN
+        ========================================================= */
+
+        .main {
+            flex: 1;
+            min-height: 0;
+
+            display: flex;
+        }
+
+
+        /* =========================================================
+           PROJECT SIDEBAR
+        ========================================================= */
+
+        .sidebar {
+            width: 280px;
+            min-width: 220px;
+
+            display: flex;
+            flex-direction: column;
+
+            background: #fff;
+
+            border-right: 1px solid #c8c8c8;
+        }
+
+        .panel-title {
+            height: 30px;
+
+            padding: 7px 10px;
+
+            background: #eeeeee;
+
+            border-bottom: 1px solid #ccc;
+
+            font-weight: 600;
+        }
+
+        .tree {
+            flex: 1;
+
+            padding: 8px 5px;
+
+            overflow-y: auto;
+        }
+
+        .tree-root {
+            padding: 4px 7px;
+
+            font-weight: 600;
+        }
+
+        .tree-module {
+            padding: 7px 8px 7px 25px;
+
+            border: 1px solid transparent;
+
+            cursor: pointer;
+        }
+
+        .tree-module:hover {
+            background: #f0f6fc;
+        }
+
+        .tree-module.active {
+            background: #cce8ff;
+            border-color: #99cfff;
+        }
+
+
+        /* =========================================================
+           CONTENT
+        ========================================================= */
+
+        .content {
+            flex: 1;
+            min-width: 0;
+
+            display: flex;
+            flex-direction: column;
+
+            background: #fff;
+        }
+
+
+        /* =========================================================
+           DASHBOARD HEADER
+        ========================================================= */
+
+        .dashboard-header {
+            height: 52px;
+            min-height: 52px;
+
+            display: flex;
+            align-items: center;
+
+            padding: 0 15px;
+
+            background: #f7f7f7;
+
+            border-bottom: 1px solid #ccc;
+        }
+
+        .dashboard-icon {
+            margin-right: 10px;
+            font-size: 21px;
+        }
+
+        .dashboard-name {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .dashboard-type {
+            margin-left: 12px;
+            color: #777;
+        }
+
+
+        /* =========================================================
+           TABS
+        ========================================================= */
+
+        .tabs {
+            height: 35px;
+
+            display: flex;
+
+            background: #f5f5f5;
+
+            border-bottom: 1px solid #ccc;
+        }
+
+        .tab {
+            padding: 9px 16px;
+
+            border-right: 1px solid #ccc;
+
+            cursor: pointer;
+        }
+
+        .tab:hover {
+            background: #e8f1fb;
+        }
+
+        .tab.active {
+            padding-top: 7px;
+
+            background: #fff;
+
+            border-top: 2px solid #0078d7;
+        }
+
+
+        /* =========================================================
+           DASHBOARD AREA
+        ========================================================= */
+
+        .dashboard {
+            flex: 1;
+            min-height: 0;
+
+            padding: 18px;
+
+            overflow-y: auto;
+        }
+
+        .section {
+            margin-bottom: 18px;
+
+            border: 1px solid #d0d0d0;
+
+            background: #fff;
+        }
+
+        .section-title {
+            padding: 8px 11px;
+
+            background: #eeeeee;
+
+            border-bottom: 1px solid #d0d0d0;
+
+            font-weight: 600;
+        }
+
+        .section-body {
+            padding: 12px;
+        }
+
+
+        /* =========================================================
+           LOG TAB
+        ========================================================= */
+
+        .log-panel {
+            height: 100%;
+
+            display: flex;
+            flex-direction: column;
+
+            border: 1px solid #d0d0d0;
+
+            background: #fff;
+        }
+
+        .log-header {
+            height: 34px;
+            min-height: 34px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 0 10px;
+
+            background: #eeeeee;
+
+            border-bottom: 1px solid #d0d0d0;
+
+            font-weight: 600;
+        }
+
+        .log-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .log-button {
+            padding: 4px 10px;
+
+            border: 1px solid #aaa;
+
+            background: #fff;
+
+            cursor: pointer;
+        }
+
+        .log-button:hover {
+            background: #e8f1fb;
+            border-color: #0078d7;
+        }
+
+        .log-body {
+            flex: 1;
+            min-height: 0;
+
+            padding: 10px;
+
+            overflow-y: auto;
+
+            background: #fff;
+
+            color: #000;
+
+            font-family: Consolas, "Courier New", monospace;
+
+            font-size: 12px;
+
+            line-height: 1.6;
+        }
+
+        .log-entry {
+            padding: 2px 4px;
+
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .log-time {
+            color: #777;
+        }
+
+        .log-user {
+            color: #005cc5;
+
+            font-weight: bold;
+        }
+
+
+        /* =========================================================
+           MODULE GRID
+        ========================================================= */
+
+        .module-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(auto-fit, minmax(180px, 1fr));
+
+            gap: 8px;
+        }
+
+        .module {
+            min-height: 70px;
+
+            display: flex;
+            align-items: center;
+
+            padding: 10px;
+
+            background: #fafafa;
+
+            border: 1px solid #ddd;
+
+            cursor: pointer;
+
+            text-decoration: none;
+
+            color: #111;
+        }
+
+        .module:hover {
+            background: #f0f6fc;
+            border-color: #99cfff;
+        }
+
+        .module-icon {
+            width: 42px;
+
+            text-align: center;
+
+            font-size: 25px;
+        }
+
+        .module-info {
+            flex: 1;
+        }
+
+        .module-name {
+            margin-bottom: 3px;
+
+            color: #005cc5;
+
+            font-weight: 600;
+        }
+
+        .module-description {
+            color: #777;
+            font-size: 12px;
+        }
+
+
+        /* =========================================================
+           USER INFORMATION
+        ========================================================= */
+
+        .user-info {
+            display: grid;
+
+            grid-template-columns:
+                repeat(auto-fit, minmax(180px, 1fr));
+
+            gap: 8px;
+        }
+
+        .info-box {
+            padding: 10px;
+
+            background: #fafafa;
+
+            border: 1px solid #ddd;
+        }
+
+        .info-label {
+            margin-bottom: 4px;
+
+            color: #777;
+
+            font-size: 12px;
+        }
+
+        .info-value {
+            font-family: Consolas, monospace;
+            font-weight: bold;
+        }
+
+
+        /* =========================================================
+           ABOUT
+        ========================================================= */
+
+        .about-box {
+            position: fixed;
+
+            inset: 0;
+
+            display: none;
+
+            align-items: center;
+            justify-content: center;
+
+            background: rgba(0, 0, 0, 0.4);
+
+            z-index: 9999;
+        }
+
+        .about-window {
+            width: 400px;
+
+            background: #f0f0f0;
+
+            color: #000;
+
+            border: 1px solid #888;
+
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .about-header {
+            display: flex;
+
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 8px 10px;
+
+            background: #0078d7;
+
+            color: #fff;
+
+            font-weight: bold;
+        }
+
+        .about-header button {
+            padding: 4px 10px;
+
+            border: 0;
+
+            background: #e81123;
+
+            color: #fff;
+
+            cursor: pointer;
+        }
+
+        .about-body {
+            padding: 20px;
+
+            line-height: 1.5;
+        }
+
+        .about-footer {
+            padding: 10px;
+
+            text-align: right;
+
+            border-top: 1px solid #ccc;
+        }
+
+        .about-footer button {
+            padding: 6px 14px;
+
+            border: 1px solid #888;
+
+            background: #e0e0e0;
+
+            cursor: pointer;
+        }
+
+
+        /* =========================================================
+           STATUS BAR
+        ========================================================= */
+
+        .statusbar {
+            height: 24px;
+            min-height: 24px;
+
+            display: flex;
+            align-items: center;
+
+            padding: 0 8px;
+
+            background: #eeeeee;
+
+            border-top: 1px solid #c8c8c8;
+
+            color: #555;
+        }
+
+        .status-right {
+            margin-left: auto;
+        }
+
+
+        /* =========================================================
+           RESPONSIVE
+        ========================================================= */
+
+        @media (max-width: 700px) {
+
+            .sidebar {
+                width: 220px;
+            }
+
+            .search {
+                width: 170px;
+            }
+
+            .dashboard-type {
+                display: none;
+            }
+
+            .module-grid {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+
+        @media (max-width: 500px) {
+
+            .sidebar {
+                width: 180px;
+                min-width: 180px;
+            }
+
+            .search {
+                width: 120px;
+            }
+
+            .tool-button {
+                padding: 0 6px;
+            }
+
+            .dashboard {
+                padding: 10px;
+            }
+
+            .about-window {
+                width: 90%;
+            }
+
+        }
+
+    </style>
+
 </head>
+
+
 <body>
-<div class="main">
-    <div class="panel">
-        <div class="menu">
-            <div class="menu-item" onclick="toggleMenu(this)">Home
-                <div class="submenu">                                                                                                          
-                    <div onclick="logout()">Logout</div>
-                </div>                                        
-            </div>
-            <div class="menu-item" onclick="toggleMenu(this)">Settings
-                <div class="submenu">
-                    <div onclick="log('Opening settings')">Preferences</div>
-                    <div onclick="toggleServerLog()">Server Log</div>
-                </div>
-            </div>
-            <div class="menu-item" onclick="toggleMenu(this)">Help
-                <div class="submenu">
-                    <div onclick="openAbout()">About</div>
-                </div>
-            </div>
+
+<div class="window">
+
+
+    <!-- =========================================================
+         TITLE BAR
+    ========================================================= -->
+
+    <div class="titlebar">
+
+        <div class="title-icon">
+            🖥️
         </div>
+
+        <div class="title">
+            PyPanel Flask
+        </div>
+
+        <div class="window-buttons">
+
+            <button
+                class="window-button"
+                onclick="toggleFullscreen()">
+                □
+            </button>
+
+            <button
+                class="window-button close"
+                onclick="logout()">
+                ×
+            </button>
+
+        </div>
+
     </div>
-    <div class="content">
-        <div class="topbar">
-            <h2>{{ username }}</h2>
-            <a href="/logout" class="logout">Logout</a>
-        </div>
-        <div style="margin-top:20px;">
-            <div style="display: flex; flex-direction: column; align-items: center; gap: 15px; width: 100%;">
-                <a href="/filemanager" class="card" onclick="log('Files accessed')">📁 Files</a>
-                <div onclick="log('Domains accessed')" class="card">🌐 Domains</div>
-                <a href="/database" class="card" onclick="log('database open')">🗄️ Database</a>
-                <div onclick="log('Emails accessed')" class="card">📧 Emails</div>
-                <div onclick="log('Security accessed')" class="card">🔒 Security</div>
-                <a href="/backup" class="card">💾 Backups</a>
-                <div onclick="log('Monitoring accessed')" class="card">📊 Monitoring</div>
-                <div onclick="toggleServerLog()" class="card">🖥️ Server Log</div>
+
+
+    <!-- =========================================================
+         MENU
+    ========================================================= -->
+
+    <div class="menu">
+
+        <div
+            class="menu-item"
+            onclick="toggleMenu(this)">
+
+            Home
+
+            <div class="submenu">
+
+                <div
+                    class="submenu-item"
+                    onclick="location.reload()">
+                    Dashboard
+                </div>
+
+                <div
+                    class="submenu-item"
+                    onclick="logout()">
+                    Logout
+                </div>
+
             </div>
+
         </div>
+
+
+        <div
+            class="menu-item"
+            onclick="toggleMenu(this)">
+
+            Settings
+
+            <div class="submenu">
+
+                <div
+                    class="submenu-item"
+                    onclick="log('Opening preferences')">
+                    Preferences
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div
+            class="menu-item"
+            onclick="toggleMenu(this)">
+
+            Help
+
+            <div class="submenu">
+
+                <div
+                    class="submenu-item"
+                    onclick="openAbout()">
+                    About
+                </div>
+
+            </div>
+
+        </div>
+
     </div>
-<div class="footer">
-<p><strong>PyPanel Flask</strong></p>
-<p>Version: 1.0 | Web</p>
+
+
+    <!-- =========================================================
+         TOOLBAR
+    ========================================================= -->
+
+    <div class="toolbar">
+
+        <button
+            class="tool-button"
+            onclick="location.reload()">
+            ↻ Refresh
+        </button>
+
+        <button
+            class="tool-button"
+            onclick="openAbout()">
+            ℹ About
+        </button>
+
+        <input
+            type="text"
+            id="search"
+            class="search"
+            placeholder="Search modules..."
+            oninput="searchModules(this.value)">
+
+    </div>
+
+
+    <!-- =========================================================
+         MAIN
+    ========================================================= -->
+
+    <div class="main">
+
+
+        <!-- =====================================================
+             SIDEBAR
+        ===================================================== -->
+
+        <aside class="sidebar">
+
+            <div class="panel-title">
+                Project
+            </div>
+
+            <div class="tree">
+
+                <div class="tree-root">
+                    📁 PyPanel Flask
+                </div>
+
+
+                <div
+                    class="tree-module active"
+                    data-module="Files"
+                    onclick="openModule(
+                        '/filemanager',
+                        'Files',
+                        'File Manager',
+                        '📁'
+                    )">
+                    📁 Files
+                </div>
+
+
+                <div
+                    class="tree-module"
+                    data-module="Domains"
+                    onclick="log('Domains accessed')">
+                    🌐 Domains
+                </div>
+
+
+                <div
+                    class="tree-module"
+                    data-module="Database"
+                    onclick="openModule(
+                        '/database',
+                        'Database',
+                        'Database Manager',
+                        '🗄️'
+                    )">
+                    🗄️ Database
+                </div>
+
+
+                <div
+                    class="tree-module"
+                    data-module="Emails"
+                    onclick="log('Emails accessed')">
+                    📧 Emails
+                </div>
+
+
+                <div
+                    class="tree-module"
+                    data-module="Security"
+                    onclick="log('Security accessed')">
+                    🔒 Security
+                </div>
+
+
+                <div
+                    class="tree-module"
+                    data-module="Backups"
+                    onclick="openModule(
+                        '/backup',
+                        'Backups',
+                        'Backup Manager',
+                        '💾'
+                    )">
+                    💾 Backups
+                </div>
+
+
+                <div
+                    class="tree-module"
+                    data-module="Monitoring"
+                    onclick="log('Monitoring accessed')">
+                    📊 Monitoring
+                </div>
+
+            </div>
+
+        </aside>
+
+
+        <!-- =====================================================
+             CONTENT
+        ===================================================== -->
+
+        <main class="content">
+
+
+            <!-- =================================================
+                 HEADER
+            ================================================= -->
+
+            <div class="dashboard-header">
+
+                <div
+                    class="dashboard-icon"
+                    id="dashboardIcon">
+                    🖥️
+                </div>
+
+                <div
+                    class="dashboard-name"
+                    id="dashboardName">
+                    Dashboard
+                </div>
+
+                <div
+                    class="dashboard-type"
+                    id="dashboardType">
+                    PyPanel Flask
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 TABS
+            ================================================= -->
+
+            <div class="tabs">
+
+                <div
+                    class="tab active"
+                    onclick="switchTab(this, 'overview')">
+                    Overview
+                </div>
+
+                <div
+                    class="tab"
+                    onclick="switchTab(this, 'modules')">
+                    Modules
+                </div>
+
+                <div
+                    class="tab"
+                    onclick="switchTab(this, 'system')">
+                    System
+                </div>
+
+                <div
+                    class="tab"
+                    onclick="switchTab(this, 'log')">
+                    Server Log
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 DASHBOARD
+            ================================================= -->
+
+            <div class="dashboard">
+
+
+                <!-- =================================================
+                     OVERVIEW
+                ================================================= -->
+
+                <div
+                    class="tab-content"
+                    id="overview">
+
+                    <div class="section">
+
+                        <div class="section-title">
+                            Dashboard
+                        </div>
+
+                        <div class="section-body">
+
+                            <div class="user-info">
+
+                                <div class="info-box">
+
+                                    <div class="info-label">
+                                        User
+                                    </div>
+
+                                    <div class="info-value">
+                                        {{ username }}
+                                    </div>
+
+                                </div>
+
+
+                                <div class="info-box">
+
+                                    <div class="info-label">
+                                        Application
+                                    </div>
+
+                                    <div class="info-value">
+                                        PyPanel Flask
+                                    </div>
+
+                                </div>
+
+
+                                <div class="info-box">
+
+                                    <div class="info-label">
+                                        Version
+                                    </div>
+
+                                    <div class="info-value">
+                                        1.0
+                                    </div>
+
+                                </div>
+
+
+                                <div class="info-box">
+
+                                    <div class="info-label">
+                                        Browser
+                                    </div>
+
+                                    <div
+                                        class="info-value"
+                                        id="browserInfo">
+                                        Detecting...
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="section">
+
+                        <div class="section-title">
+                            Quick Access
+                        </div>
+
+                        <div class="section-body">
+
+                            <div class="module-grid">
+
+
+                                <a
+                                    href="/filemanager"
+                                    class="module"
+                                    onclick="log('Files accessed')">
+
+                                    <div class="module-icon">
+                                        📁
+                                    </div>
+
+                                    <div class="module-info">
+
+                                        <div class="module-name">
+                                            Files
+                                        </div>
+
+                                        <div class="module-description">
+                                            File Manager
+                                        </div>
+
+                                    </div>
+
+                                </a>
+
+
+                                <div
+                                    class="module"
+                                    onclick="log('Domains accessed')">
+
+                                    <div class="module-icon">
+                                        🌐
+                                    </div>
+
+                                    <div class="module-info">
+
+                                        <div class="module-name">
+                                            Domains
+                                        </div>
+
+                                        <div class="module-description">
+                                            Domain Management
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+
+                                <a
+                                    href="/database"
+                                    class="module"
+                                    onclick="log('Database open')">
+
+                                    <div class="module-icon">
+                                        🗄️
+                                    </div>
+
+                                    <div class="module-info">
+
+                                        <div class="module-name">
+                                            Database
+                                        </div>
+
+                                        <div class="module-description">
+                                            Database Manager
+                                        </div>
+
+                                    </div>
+
+                                </a>
+
+
+                                <div
+                                    class="module"
+                                    onclick="log('Emails accessed')">
+
+                                    <div class="module-icon">
+                                        📧
+                                    </div>
+
+                                    <div class="module-info">
+
+                                        <div class="module-name">
+                                            Emails
+                                        </div>
+
+                                        <div class="module-description">
+                                            Email Management
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div
+                                    class="module"
+                                    onclick="log('Security accessed')">
+
+                                    <div class="module-icon">
+                                        🔒
+                                    </div>
+
+                                    <div class="module-info">
+
+                                        <div class="module-name">
+                                            Security
+                                        </div>
+
+                                        <div class="module-description">
+                                            Security Management
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+
+                                <a
+                                    href="/backup"
+                                    class="module"
+                                    onclick="log('Backup accessed')">
+
+                                    <div class="module-icon">
+                                        💾
+                                    </div>
+
+                                    <div class="module-info">
+
+                                        <div class="module-name">
+                                            Backups
+                                        </div>
+
+                                        <div class="module-description">
+                                            Backup Manager
+                                        </div>
+
+                                    </div>
+
+                                </a>
+
+
+                                <div
+                                    class="module"
+                                    onclick="log('Monitoring accessed')">
+
+                                    <div class="module-icon">
+                                        📊
+                                    </div>
+
+                                    <div class="module-info">
+
+                                        <div class="module-name">
+                                            Monitoring
+                                        </div>
+
+                                        <div class="module-description">
+                                            System Monitoring
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div
+                                    class="module"
+                                    onclick="switchTabByName('log')">
+
+                                    <div class="module-icon">
+                                        🖥️
+                                    </div>
+
+                                    <div class="module-info">
+
+                                        <div class="module-description">
+                                            Server Activity
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     MODULES
+                ================================================= -->
+
+                <div
+                    class="tab-content"
+                    id="modules"
+                    style="display:none;">
+
+                    <div class="section">
+
+                        <div class="section-title">
+                            Project Modules
+                        </div>
+
+                        <div class="section-body">
+
+                            <div class="module-grid">
+
+                                <div class="module">
+                                    📁 File Manager
+                                </div>
+
+                                <div class="module">
+                                    🌐 Domain Manager
+                                </div>
+
+                                <div class="module">
+                                    🗄️ Database Manager
+                                </div>
+
+                                <div class="module">
+                                    📧 Email Manager
+                                </div>
+
+                                <div class="module">
+                                    🔒 Security
+                                </div>
+
+                                <div class="module">
+                                    💾 Backup Manager
+                                </div>
+
+                                <div class="module">
+                                    📊 Monitoring
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     SYSTEM
+                ================================================= -->
+
+                <div
+                    class="tab-content"
+                    id="system"
+                    style="display:none;">
+
+                    <div class="section">
+
+                        <div class="section-title">
+                            System Information
+                        </div>
+
+                        <div class="section-body">
+
+                            <div class="user-info">
+
+                                <div class="info-box">
+
+                                    <div class="info-label">
+                                        Browser
+                                    </div>
+
+                                    <div
+                                        class="info-value"
+                                        id="systemBrowser">
+                                        Detecting...
+                                    </div>
+
+                                </div>
+
+
+                                <div class="info-box">
+
+                                    <div class="info-label">
+                                        Platform
+                                    </div>
+
+                                    <div class="info-value">
+                                        Web
+                                    </div>
+
+                                </div>
+
+
+                                <div class="info-box">
+
+                                    <div class="info-label">
+                                        Application
+                                    </div>
+
+                                    <div class="info-value">
+                                        Flask
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     LOG
+                ================================================= -->
+
+                <div
+                    class="tab-content"
+                    id="log"
+                    style="display:none;">
+
+                    <div class="log-panel">
+
+                        <div class="log-header">
+
+                            <span>
+                                Server Log
+                            </span>
+
+                            <div class="log-actions">
+
+                                <button
+                                    class="log-button"
+                                    onclick="clearLog()">
+                                    Clear
+                                </button>
+
+                                <button
+                                    class="log-button"
+                                    onclick="refreshLog()">
+                                    Refresh
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                        <div
+                            class="log-body"
+                            id="tabLogBody">
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </main>
+
+    </div>
+
+
+    <!-- =========================================================
+         STATUS BAR
+    ========================================================= -->
+
+    <div class="statusbar">
+
+        <span>
+            Ready
+        </span>
+
+        <span class="status-right">
+            PyPanel Flask 1.0
+        </span>
+
+    </div>
+
 </div>
+
+<!-- =============================================================
+     ABOUT
+============================================================= -->
+
+<div
+    class="about-box"
+    id="aboutBox">
+
+    <div class="about-window">
+
+        <!-- About Header -->
+        <div class="about-header">
+
+            <span>
+                About
+            </span>
+
+            <button
+                onclick="closeAbout()">
+                Close
+            </button>
+
+        </div>
+
+
+        <!-- About Content -->
+        <div class="about-body">
+
+            <div class="about-title">
+
+                <h3>
+                    PyPanel Flask
+                </h3>
+
+                <p>
+                    A lightweight and flexible web-based application
+                    built with Python and Flask, providing an intuitive
+                    interface for local management and system administration.
+                </p>
+
+            </div>
+
+
+            <div class="about-divider"></div>
+
+
+            <div class="about-info">
+
+                <div class="about-info-row">
+
+                    <span class="about-label">
+                        Version:
+                    </span>
+
+                    <span class="about-value">
+                        1.0
+                    </span>
+
+                </div>
+
+
+                <div class="about-info-row">
+
+                    <span
+                        class="about-value"
+                        id="aboutBrowser">
+                        Detecting...
+                    </span>
+
+                </div>
+
+
+                <div class="about-info-row">
+
+                    <span class="about-label">
+                        Developer:
+                    </span>
+
+                    <span class="about-value">
+                        Qubit
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- About Footer -->
+        <div class="about-footer">
+
+            <button
+                onclick="closeAbout()">
+                OK
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =============================================================
+     JAVASCRIPT
+============================================================= -->
+
 <script>
+
 let DEBUG_LOG = true;
 
-document.addEventListener("DOMContentLoaded", function () {
+/* =========================================================
+   FULLSCREEN
+========================================================= */
 
-    function toggleMenu(el){
-        const isOpen = el.classList.contains("active");
+function toggleFullscreen() {
+    if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen();
+    } else {
+        document.exitFullscreen();
+    }
+}
 
-        document.querySelectorAll(".menu-item").forEach(m => {
-            m.classList.remove("active");
+/* =========================================================
+   MENU
+========================================================= */
+
+function toggleMenu(element) {
+
+    const isOpen =
+        element.classList.contains("active");
+
+    document
+        .querySelectorAll(".menu-item")
+        .forEach(item => {
+
+            item.classList.remove("active");
+
         });
 
-        if(!isOpen){
-            el.classList.add("active");
-        }
+    if (!isOpen) {
+
+        element.classList.add("active");
+
     }
 
-    window.toggleMenu = toggleMenu;
+}
 
-    document.querySelectorAll(".menu-item").forEach(item=>{
-        item.addEventListener("mouseenter", ()=>{
-            if(document.querySelector(".menu-item.active")){
-                document.querySelectorAll(".menu-item").forEach(m=>m.classList.remove("active"));
-                item.classList.add("active");
-            }
+
+/* =========================================================
+   MENU EVENTS
+========================================================= */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    document
+        .querySelectorAll(".menu-item")
+        .forEach(item => {
+
+            item.addEventListener("mouseenter", () => {
+
+                if (
+                    document.querySelector(
+                        ".menu-item.active"
+                    )
+                ) {
+
+                    document
+                        .querySelectorAll(".menu-item")
+                        .forEach(menu => {
+
+                            menu.classList.remove(
+                                "active"
+                            );
+
+                        });
+
+                    item.classList.add("active");
+
+                }
+
+            });
+
         });
+
+
+    document.addEventListener("click", event => {
+
+        if (!event.target.closest(".menu")) {
+
+            document
+                .querySelectorAll(".menu-item")
+                .forEach(item => {
+
+                    item.classList.remove(
+                        "active"
+                    );
+
+                });
+
+        }
+
     });
 
-    document.addEventListener("click", e=>{
-        if(!e.target.closest(".menu")){
-            document.querySelectorAll(".menu-item").forEach(m=>m.classList.remove("active"));
-        }
-    });
+
+    getBrowserInfo();
 
 });
 
-function log(msg){
-    if(DEBUG_LOG) console.log(msg);
-    serverLog("USER: " + msg);
+
+/* =========================================================
+   LOG
+========================================================= */
+
+function log(message) {
+
+    if (DEBUG_LOG) {
+        console.log(message);
+    }
+
+    serverLog(
+        "USER: " + message
+    );
+
 }
 
-function serverLog(msg){
-    const box = document.getElementById("serverLogBody");
-    if(!box) return;
-    const time = new Date().toLocaleTimeString();
-    box.innerHTML += `[${time}] ${msg}<br>`;
-    box.scrollTop = box.scrollHeight;
+
+function serverLog(message) {
+
+    const time =
+        new Date().toLocaleTimeString();
+
+    const entry =
+        `<div class="log-entry">
+            <span class="log-time">[${time}]</span>
+            <span class="log-user">${message}</span>
+        </div>`;
+
+
+    const tabLog =
+        document.getElementById("tabLogBody");
+
+    const popupLog =
+        document.getElementById("serverLogBody");
+
+
+    if (tabLog) {
+
+        tabLog.insertAdjacentHTML(
+            "beforeend",
+            entry
+        );
+
+        tabLog.scrollTop =
+            tabLog.scrollHeight;
+
+    }
+
+
+    if (popupLog) {
+
+        popupLog.insertAdjacentHTML(
+            "beforeend",
+            entry
+        );
+
+        popupLog.scrollTop =
+            popupLog.scrollHeight;
+
+    }
+
 }
 
-function toggleServerLog(){
-    document.getElementById("serverLog").classList.add("active");
+
+function clearLog() {
+
+    const tabLog =
+        document.getElementById("tabLogBody");
+
+    const popupLog =
+        document.getElementById("serverLogBody");
+
+
+    if (tabLog) {
+        tabLog.innerHTML = "";
+    }
+
+    if (popupLog) {
+        popupLog.innerHTML = "";
+    }
+
 }
 
-function closeServerLog(){
-    document.getElementById("serverLog").classList.remove("active");
+
+function refreshLog() {
+
+    log(
+        "Log refreshed"
+    );
+
 }
 
-function logout(){
-    window.location.href = "/logout";
+
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+function logout() {
+
+    window.location.href =
+        "/logout";
+
 }
 
-// Browser Info
+
+/* =========================================================
+   MODULE
+========================================================= */
+
+function openModule(
+    url,
+    name,
+    type,
+    icon
+) {
+
+    log(
+        name + " accessed"
+    );
+
+
+    document
+        .querySelectorAll(".tree-module")
+        .forEach(module => {
+
+            module.classList.remove(
+                "active"
+            );
+
+        });
+
+
+    const selected =
+        document.querySelector(
+            `.tree-module[data-module="${name}"]`
+        );
+
+
+    if (selected) {
+
+        selected.classList.add(
+            "active"
+        );
+
+    }
+
+
+    document.getElementById(
+        "dashboardName"
+    ).textContent =
+        name;
+
+
+    document.getElementById(
+        "dashboardType"
+    ).textContent =
+        type;
+
+
+    document.getElementById(
+        "dashboardIcon"
+    ).textContent =
+        icon;
+
+
+    if (url) {
+
+        window.location.href =
+            url;
+
+    }
+
+}
+
+
+/* =========================================================
+   TAB SYSTEM
+========================================================= */
+
+function switchTab(
+    element,
+    target
+) {
+
+    document
+        .querySelectorAll(".tab")
+        .forEach(tab => {
+
+            tab.classList.remove(
+                "active"
+            );
+
+        });
+
+
+    if (element) {
+
+        element.classList.add(
+            "active"
+        );
+
+    }
+
+
+    document
+        .querySelectorAll(".tab-content")
+        .forEach(content => {
+
+            content.style.display =
+                "none";
+
+        });
+
+
+    const selected =
+        document.getElementById(
+            target
+        );
+
+
+    if (selected) {
+
+        selected.style.display =
+            "block";
+
+    }
+
+}
+
+
+function switchTabByName(target) {
+
+    const tab =
+        document.querySelector(
+            `.tab[onclick*="'${target}'"]`
+        );
+
+
+    if (!tab) {
+        return;
+    }
+
+
+    switchTab(
+        tab,
+        target
+    );
+
+}
+
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+function searchModules(value) {
+
+    const search =
+        value
+            .toLowerCase()
+            .trim();
+
+
+    document
+        .querySelectorAll(".tree-module")
+        .forEach(module => {
+
+            const name =
+                module.dataset.module
+                    .toLowerCase();
+
+
+            module.style.display =
+                name.includes(search)
+                    ? "block"
+                    : "none";
+
+        });
+
+}
+
+
+/* =========================================================
+   BROWSER INFO
+========================================================= */
+
 function getBrowserInfo() {
 
-    const ua = navigator.userAgent;
+    const ua =
+        navigator.userAgent;
 
-    let browser = "Unknown";
+    let browser =
+        "Unknown";
 
-    if (ua.includes("Firefox")) {
-        browser = "Mozilla Firefox";
-    } 
-    else if (ua.includes("SamsungBrowser")) {
-        browser = "Samsung Internet";
-    } 
-    else if (ua.includes("Opera") || ua.includes("OPR")) {
-        browser = "Opera";
-    } 
+
+    if (ua.includes("SamsungBrowser")) {
+
+        browser =
+            "Samsung Internet";
+
+    }
+
+    else if (ua.includes("Firefox")) {
+
+        browser =
+            "Mozilla Firefox";
+
+    }
+
+    else if (
+        ua.includes("Opera") ||
+        ua.includes("OPR")
+    ) {
+
+        browser =
+            "Opera";
+
+    }
+
     else if (ua.includes("Edg")) {
-        browser = "Microsoft Edge";
-    } 
+
+        browser =
+            "Microsoft Edge";
+
+    }
+
     else if (ua.includes("Chrome")) {
-        browser = "Google Chrome";
-    } 
+
+        browser =
+            "Google Chrome";
+
+    }
+
     else if (ua.includes("Safari")) {
-        browser = "Safari";
+
+        browser =
+            "Safari";
+
     }
 
-    const browserInfo = document.getElementById("browserInfo");
 
-    if(browserInfo){
-        browserInfo.innerHTML = `Browser: ${browser}`;
+    const browserInfo =
+        document.getElementById(
+            "browserInfo"
+        );
+
+    const systemBrowser =
+        document.getElementById(
+            "systemBrowser"
+        );
+
+    const aboutBrowser =
+        document.getElementById(
+            "aboutBrowser"
+        );
+
+
+    if (browserInfo) {
+
+        browserInfo.textContent =
+            browser;
+
     }
+
+
+    if (systemBrowser) {
+
+        systemBrowser.textContent =
+            browser;
+
+    }
+
+
+    if (aboutBrowser) {
+
+        aboutBrowser.textContent =
+            "Browser: " + browser;
+
+    }
+
 }
 
-/* EXECUTA */
-document.addEventListener("DOMContentLoaded", () => {
-    getBrowserInfo();
-});
 
-/* ABOUT */
-function openAbout(){
-    document.getElementById("aboutBox").style.display = "block";
-    log("Opened About Box");
+/* =========================================================
+   ABOUT
+========================================================= */
+
+function openAbout() {
+
+    const box =
+        document.getElementById(
+            "aboutBox"
+        );
+
+
+    if (!box) {
+        return;
+    }
+
+
+    box.style.display =
+        "flex";
+
+
+    log(
+        "Opened About Box"
+    );
+
 }
 
-function closeAbout(){
-    const box = document.getElementById("aboutBox");
-    if(!box) return;
 
-    box.style.display = "none";
-    box.classList.remove("active");
+function closeAbout() {
+
+    const box =
+        document.getElementById(
+            "aboutBox"
+        );
+
+
+    if (!box) {
+        return;
+    }
+
+
+    box.style.display =
+        "none";
+
 }
-    
+
 </script>
-<!-- SERVER LOG -->
-<div class="server-log" id="serverLog">
-    <div class="server-log-panel">
-        <div class="server-log-header">
-            Log:
-            <button onclick="closeServerLog()">Close</button>
-        </div>
-        <div class="server-log-body" id="serverLogBody"></div>
-    </div>
-</div>
-<!-- ABOUT BOX -->
-<div class="about-box" id="aboutBox">
-    <div class="about-window">
-        <div class="about-header">
-            About:
-            <button onclick="closeAbout()">Close</button>
-        </div>
-        <div class="about-body">
-            <h3>PyPanel Flesk</h3>
-            <p>Version: 1.0</p>
-            <!-- BROWSER INFO -->
-            <p id="browserInfo">Browser: Detectando...</p>            
-            <p>Developer: Qubit</p>
-            <br>
-            <p>
-            A lightweight and flexible web-based application built with Python
-            and Flask, providing an intuitive interface for local management
-            and system administration.
-            </p>
-        </div>
-        <div class="about-footer">
-            <button onclick="closeAbout()">OK</button>
-        </div>
-    </div>
+
+</body>
 </html>
