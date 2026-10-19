@@ -1,300 +1,773 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>pypanelflask/login</title>
+    <meta charset="UTF-8">
 
-<style>
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: "Segoe UI", Tahoma, Arial, sans-serif;
-}
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
 
-body {
-    min-height: 100vh;
-    min-height: 100dvh;
-    display: flex;
-    flex-direction: column;
-    background: #0f2027;
-    color: #fff;
-}
+    <title>PyPanel Flask</title>
 
-.project-icon {
-    display: inline-block;
-    margin: 40px auto 0;
-    padding: 4px 16px;
 
-    text-align: center;
-    font-size: 30px;
-    color: #fff;
+    <style>
 
-    background: linear-gradient(90deg,
-        #3a6ea5,
-        #0a246a,
-        #3a6ea5,
-        #0a246a,
-        #3a6ea5
-    );
+        /* =========================================================
+           RESET
+        ========================================================= */
 
-    background-size: 300% 100%;
-    animation: gradientMove 6s linear infinite;
+        * {
+            box-sizing: border-box;
+        }
 
-    border-radius: 999px;
-    position: relative;
-}
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
 
-@keyframes gradientMove {
-    0% {
-        background-position: 0% 50%;
-    }
-    100% {
-        background-position: 100% 50%;
-    }
-}
+            overflow: hidden;
 
-.main {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
+            font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+            font-size: 13px;
 
-.window {
-    width: 350px;
-    border: 1px solid #888;
-    background: #f0f0f0;
-    border-radius: 6px;
-    overflow: hidden;
-}
+            background: #f0f0f0;
+            color: #111;
+        }
 
-.title-bar {
-    background: linear-gradient(to right, #0a246a, #3a6ea5);
-    color: #fff;
-    padding: 8px 12px;
-    font-size: 14px;
-    font-weight: 500;
-}
 
-.content {
-    padding: 25px 20px;
-}
+        /* =========================================================
+           WINDOW
+        ========================================================= */
 
-input {
-    width: 100%;
-    padding: 8px;
-    margin-bottom: 15px;
+        .window {
+            width: 100%;
+            height: 100vh;
 
-    border: 1px solid #aaa;
-    border-radius: 4px;
-    background: #fff;
-    font-size: 13px;
-    transition: 0.2s;
-}
+            display: flex;
+            flex-direction: column;
+        }
 
-input:focus {
-    outline: none;
-    border-color: #3a6ea5;
-    box-shadow: 0 0 4px rgba(58,110,165,0.5);
-}
 
-/* Container do botão */
-.button-area {
-    display: flex;
-    justify-content: flex-end;
-}
+        /* =========================================================
+           TITLE BAR
+        ========================================================= */
 
-button {
-    padding: 6px 18px;
-    font-size: 13px;
+        .titlebar {
+            height: 32px;
+            min-height: 32px;
 
-    border: 1px solid #888;
-    border-radius: 4px;
-    background: linear-gradient(#f5f5f5, #dcdcdc);
+            display: flex;
+            align-items: center;
 
-    cursor: pointer;
-    transition: 0.2s;
-}
+            background: #0078d7;
+            color: #fff;
 
-button:hover {
-    background: linear-gradient(#ffffff, #d0d0d0);
-}
+            user-select: none;
+        }
 
-button:active {
-    background: #c8c8c8;
-}
+        .title-icon {
+            width: 32px;
 
-/* LOGBOX */
-.logbox {
-    width: 350px;
-    min-height: 85px;
+            text-align: center;
 
-    padding: 12px 14px;
+            font-size: 15px;
+        }
 
-    background: rgba(0, 0, 0, 0.88);
-    border: 1px solid rgba(255,255,255,0.08);
+        .title {
+            flex: 1;
 
-    border-radius: 5px;
+            font-size: 13px;
+        }
 
-    color: #d6d6d6;
-    font-size: 12px;
+        .window-buttons {
+            height: 100%;
 
-    overflow-y: auto;
-}
+            display: flex;
+        }
 
-.logbox-title {
-    margin-bottom: 8px;
+        .window-button {
+            width: 46px;
+            height: 100%;
 
-    color: #ffffff;
+            border: 0;
 
-    font-size: 12px;
-    font-weight: 600;
+            background: transparent;
+            color: #fff;
 
-    letter-spacing: 0.5px;
+            font-size: 15px;
 
-    border-bottom: 1px solid rgba(255,255,255,0.08);
-    padding-bottom: 6px;
-}
+            cursor: pointer;
+        }
 
-.log-line {
-    margin-bottom: 5px;
+        .window-button:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
 
-    font-family: Consolas, monospace;
+        .window-button.close:hover {
+            background: #e81123;
+        }
 
-    opacity: 0.9;
-}
 
-/* LOGBOX */
-.logbox {
-    width: 350px;
-    min-height: 85px;
+        /* =========================================================
+           MAIN
+        ========================================================= */
 
-    padding: 12px 14px;
+        .main {
+            flex: 1;
+            min-height: 0;
 
-    background: rgba(0, 0, 0, 0.88);
-    border: 1px solid rgba(255,255,255,0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
 
-    border-radius: 5px;
+            padding: 25px;
 
-    color: #d6d6d6;
-    font-size: 12px;
+            background: #f0f0f0;
 
-    overflow-y: auto;
-}
+            overflow-y: auto;
+        }
 
-.logbox-title {
-    margin-bottom: 8px;
 
-    color: #ffffff;
+        /* =========================================================
+           LOGIN AREA
+        ========================================================= */
 
-    font-size: 12px;
-    font-weight: 600;
+        .login-container {
+            width: 390px;
+            max-width: 100%;
+        }
 
-    letter-spacing: 0.5px;
 
-    border-bottom: 1px solid rgba(255,255,255,0.08);
-    padding-bottom: 6px;
-}
+        /* =========================================================
+           HEADER
+        ========================================================= */
 
-.log-line {
-    margin-bottom: 5px;
+        .login-header {
+            height: 52px;
+            min-height: 52px;
 
-    font-family: Consolas, monospace;
+            display: flex;
+            align-items: center;
 
-    opacity: 0.9;
-}
+            padding: 0 15px;
 
-.footer {
-    background: #111;
-    border-top: 1px solid #333;
-    padding: 15px;
-    text-align: center;
-    font-size: 14px;
-    color: #aaa;
-}
+            background: #f7f7f7;
 
-.footer strong {
-    color: #fff;
-}
-</style>
+            border: 1px solid #ccc;
+            border-bottom: 0;
+        }
+
+        .login-icon {
+            margin-right: 10px;
+
+            font-size: 21px;
+        }
+
+        .login-title {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .login-type {
+            margin-left: 12px;
+
+            color: #777;
+        }
+
+
+        /* =========================================================
+           LOGIN PANEL
+        ========================================================= */
+
+        .login-panel {
+            border: 1px solid #d0d0d0;
+
+            background: #fff;
+        }
+
+        .panel-title {
+            padding: 8px 11px;
+
+            background: #eeeeee;
+
+            border-bottom: 1px solid #d0d0d0;
+
+            font-weight: 600;
+        }
+
+        .panel-body {
+            padding: 18px;
+        }
+
+
+        /* =========================================================
+           FORM
+        ========================================================= */
+
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        .form-label {
+            display: block;
+
+            margin-bottom: 5px;
+
+            color: #555;
+
+            font-size: 12px;
+        }
+
+        input {
+            width: 100%;
+            height: 32px;
+
+            padding: 5px 8px;
+
+            border: 1px solid #aaa;
+
+            background: #fff;
+
+            color: #111;
+
+            outline: none;
+
+            font-family: inherit;
+            font-size: 13px;
+        }
+
+        input:focus {
+            border-color: #0078d7;
+
+            box-shadow:
+                0 0 0 1px #0078d7;
+        }
+
+
+        /* =========================================================
+           BUTTON
+        ========================================================= */
+
+        .button-area {
+            display: flex;
+            justify-content: flex-end;
+
+            margin-top: 18px;
+        }
+
+        .login-button {
+            height: 30px;
+
+            padding: 0 18px;
+
+            border: 1px solid #aaa;
+
+            background: #fff;
+
+            color: #111;
+
+            cursor: pointer;
+
+            font-family: inherit;
+            font-size: 13px;
+        }
+
+        .login-button:hover {
+            background: #e8f1fb;
+
+            border-color: #0078d7;
+        }
+
+        .login-button:active {
+            background: #dcecf9;
+        }
+
+        .login-button:disabled {
+            opacity: 0.6;
+            cursor: default;
+        }
+
+
+        /* =========================================================
+           SYSTEM LOG
+        ========================================================= */
+
+        .log-panel {
+            margin-top: 12px;
+
+            border: 1px solid #d0d0d0;
+
+            background: #fff;
+        }
+
+        .log-header {
+            height: 34px;
+            min-height: 34px;
+
+            display: flex;
+            align-items: center;
+
+            padding: 0 10px;
+
+            background: #eeeeee;
+
+            border-bottom: 1px solid #d0d0d0;
+
+            font-weight: 600;
+        }
+
+        .log-body {
+            min-height: 78px;
+
+            padding: 10px;
+
+            background: #fff;
+
+            color: #000;
+
+            font-family: Consolas, "Courier New", monospace;
+
+            font-size: 12px;
+
+            line-height: 1.6;
+        }
+
+        .log-line {
+            padding: 2px 4px;
+
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+
+        /* =========================================================
+           STATUS BAR
+        ========================================================= */
+
+        .statusbar {
+            height: 24px;
+            min-height: 24px;
+
+            display: flex;
+            align-items: center;
+
+            padding: 0 8px;
+
+            background: #eeeeee;
+
+            border-top: 1px solid #c8c8c8;
+
+            color: #555;
+        }
+
+        .status-right {
+            margin-left: auto;
+        }
+
+
+        /* =========================================================
+           RESPONSIVE
+        ========================================================= */
+
+        @media (max-width: 500px) {
+
+            .main {
+                padding: 12px;
+            }
+
+            .login-container {
+                width: 100%;
+            }
+
+            .login-type {
+                display: none;
+            }
+
+        }
+
+    </style>
+
 </head>
+
 
 <body>
 
-<div style="text-align:center;">
-    <div class="project-icon">PyPanel-Flask</div>
-</div>
 
-<div class="main">
-    <div class="window">
-        
-        <div class="title-bar">
-            Login
-        </div>
+<div class="window">
 
-        <div class="content">
-            <form method="POST">
-                <input type="text" name="username" placeholder="Usuário" required>
-                <input type="password" name="password" placeholder="Senha" required>
 
-                <div class="button-area">
-                    <button type="submit">Entrar</button>
-                </div>
-            </form>
+    <!-- =========================================================
+         TITLE BAR
+    ========================================================= -->
+
+    <div class="titlebar">
+
+        <div class="title-icon">
+            🖥️
         </div>
 
-        <!-- LOGBOX -->
-        <div class="logbox">
-
-        <div class="logbox-title">
-        System Log
+        <div class="title">
+            PyPanel Flask
         </div>
 
-        <div class="log-line" id="server-status">
-        [CHECK] Verificando servidor...
-        </div>
-        <div class="log-line" id="connection-status">
-        [WAIT] Aguardando resposta...
-        </div>
-        </div>
-        </div>
     </div>
+
+
+    <!-- =========================================================
+         MAIN
+    ========================================================= -->
+
+    <main class="main">
+
+
+        <div class="login-container">
+
+
+            <!-- =================================================
+                 LOGIN HEADER
+            ================================================= -->
+
+            <div class="login-header">
+
+                <div class="login-icon">
+                    🔐
+                </div>
+
+                <div class="login-title">
+                    Login
+                </div>
+
+                <div class="login-type">
+                    PyPanel Flask
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 LOGIN
+            ================================================= -->
+
+            <div class="login-panel">
+
+                <div class="panel-title">
+                    Authentication
+                </div>
+
+
+                <div class="panel-body">
+
+
+                    <form
+                        method="POST"
+                        id="login-form">
+
+
+                        <div class="form-group">
+
+                            <label
+                                class="form-label"
+                                for="username">
+                                Usuário
+                            </label>
+
+                            <input
+                                type="text"
+                                id="username"
+                                name="username"
+                                autocomplete="username"
+                                placeholder="Digite seu usuário"
+                                required>
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label
+                                class="form-label"
+                                for="password">
+                                Senha
+                            </label>
+
+                            <input
+                                type="password"
+                                id="password"
+                                name="password"
+                                autocomplete="current-password"
+                                placeholder="Digite sua senha"
+                                required>
+
+                        </div>
+
+
+                        <div class="button-area">
+
+                            <button
+                                class="login-button"
+                                type="submit"
+                                id="login-button">
+                                Entrar
+                            </button>
+
+                        </div>
+
+
+                    </form>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 SYSTEM LOG
+            ================================================= -->
+
+            <div class="log-panel">
+
+                <div class="log-header">
+                    System Log
+                </div>
+
+                <div class="log-body">
+
+                    <div
+                        class="log-line"
+                        id="server-status">
+                        [CHECK] Verificando servidor...
+                    </div>
+
+                    <div
+                        class="log-line"
+                        id="connection-status">
+                        [WAIT] Aguardando resposta...
+                    </div>
+
+                    <div
+                        class="log-line"
+                        id="login-status">
+                        [WAIT] Aguardando login...
+                    </div>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+    </main>
+
+
+    <!-- =========================================================
+         STATUS BAR
+    ========================================================= -->
+
+    <div class="statusbar">
+
+        <span>
+            Ready
+        </span>
+
+        <span class="status-right">
+            PyPanel Flask 1.0
+        </span>
+
+    </div>
+
+
 </div>
+
+
 <script>
+
+
+/* =========================================================
+   LOGIN STATUS
+========================================================= */
+
+const loginForm =
+    document.getElementById(
+        "login-form"
+    );
+
+
+const loginButton =
+    document.getElementById(
+        "login-button"
+    );
+
+
+const loginStatus =
+    document.getElementById(
+        "login-status"
+    );
+
+
+loginForm.addEventListener(
+    "submit",
+    async function(event) {
+
+        event.preventDefault();
+
+
+        loginButton.disabled =
+            true;
+
+
+        loginButton.textContent =
+            "Entrando...";
+
+
+        loginStatus.innerHTML =
+            "[CHECK] Verificando credenciais...";
+
+
+        const formData =
+            new FormData(loginForm);
+
+
+        try {
+
+            const response =
+                await fetch(
+                    window.location.href,
+                    {
+                        method: "POST",
+                        body: formData,
+                        redirect: "follow"
+                    }
+                );
+
+
+            /*
+             * Login realizado.
+             * O Flask redirecionou para outra página.
+             */
+
+            if (
+                response.redirected &&
+                response.url !== window.location.href
+            ) {
+
+                loginStatus.innerHTML =
+                    "[OK] Login realizado com sucesso.";
+
+
+                window.location.href =
+                    response.url;
+
+                return;
+
+            }
+
+
+            /*
+             * Login recusado.
+             */
+
+            loginStatus.innerHTML =
+                "[ERROR] Usuário ou senha inválidos.";
+
+
+            document.getElementById(
+                "password"
+            ).value = "";
+
+
+            document.getElementById(
+                "password"
+            ).focus();
+
+
+        }
+
+        catch {
+
+            loginStatus.innerHTML =
+                "[ERROR] Não foi possível conectar ao servidor.";
+
+        }
+
+
+        loginButton.disabled =
+            false;
+
+
+        loginButton.textContent =
+            "Entrar";
+
+    }
+);
+
+
+/* =========================================================
+   SERVER STATUS
+========================================================= */
+
 async function checkServer() {
 
     const status =
-        document.getElementById("server-status");
+        document.getElementById(
+            "server-status"
+        );
+
+    const connection =
+        document.getElementById(
+            "connection-status"
+        );
+
 
     try {
 
         const response =
             await fetch("/status");
 
+
         const data =
             await response.json();
+
 
         status.innerHTML =
             `[OK] ${data.server} online`;
 
-    } catch {
+
+        connection.innerHTML =
+            "[CONNECTED] Servidor disponível";
+
+
+    }
+
+    catch {
 
         status.innerHTML =
             "[OFFLINE] Servidor desconectado";
 
+
+        connection.innerHTML =
+            "[ERROR] Não foi possível conectar ao servidor";
+
     }
+
 }
+
 
 checkServer();
 
-setInterval(checkServer, 5000);
+
+setInterval(
+    checkServer,
+    5000
+);
+
+
 </script>
-<div class="footer">
-<p><strong>PyPanel Flask</strong></p>
-<p>Version: 1.0 | Mobile</p>
-</div>
+
+
 </body>
+
 </html>

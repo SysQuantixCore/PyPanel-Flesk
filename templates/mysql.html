@@ -3,513 +3,396 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MySQL Panel</title>
-
+<title>Database Manager</title>
 <style>
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: Arial, sans-serif;
+#mysql-module, #mysql-module * { box-sizing: border-box; }
+#mysql-module {
+  width:100%; height:100%; min-height:0; display:flex; flex-direction:column;
+  overflow:hidden; background:#fff; color:#111;
+  font-family:"Segoe UI",Tahoma,Arial,sans-serif; font-size:13px;
 }
-
-body {
-    display: flex;
-    height: 100vh;
-    background: #0f2027;
-    color: #fff;
+#mysql-module button {
+  min-height:28px; padding:0 10px; border:1px solid #b8b8b8;
+  border-radius:0; background:#fff; color:#111; cursor:pointer;
+  font-family:"Segoe UI",Tahoma,Arial,sans-serif; font-size:12px;
 }
-
-.main {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
+#mysql-module button:hover { background:#e8f1fb; border-color:#0078d7; }
+#mysql-module button:focus-visible { outline:2px solid #0078d7; outline-offset:1px; }
+#mysql-module .mysql-heading {
+  min-height:46px; display:flex; align-items:center; gap:0; padding:0 12px;
+  background:#f7f7f7; border-bottom:1px solid #ccc;
 }
-
-.panel {
-    width: 100%;
-    background: #f3f3f3;
-    border-bottom: 1px solid #cfcfcf;
+#mysql-module .mysql-heading-icon { margin-right:9px; font-size:20px; }
+#mysql-module .mysql-heading h2 { margin:0; font-size:15px; font-weight:600; color:#111; }
+#mysql-module .mysql-heading p { display:none; }
+#mysql-module .mysql-heading-path {
+  margin-left:12px; color:#777; font-family:Consolas,"Courier New",monospace; font-size:12px;
 }
-
-.menu {
-    display: flex;
-    padding-left: 10px;
+#mysql-module .mysql-status {
+  display:inline-flex; align-items:center; margin-left:auto; padding:4px 8px;
+  border:1px solid #ccc; background:#fff; color:#555; font-size:11px; white-space:normal;
 }
-
-.menu-item {
-    position: relative;
-    padding: 8px 14px;
-    cursor: pointer;
-    color: #000;
-    font-size: 14px;
-    user-select: none;
+#mysql-module .mysql-toolbar {
+  min-height:38px; display:flex; flex-wrap:wrap; align-items:center; gap:5px;
+  padding:5px 8px; background:#f5f5f5; border-bottom:1px solid #c8c8c8;
 }
-
-.menu-item:hover {
-    background: #e5f1fb;
-    border: 1px solid #0078d7;
-    border-bottom: none;
+#mysql-module .mysql-toolbar button { height:28px; padding:0 12px; font-size:12px; }
+#mysql-module .mysql-toolbar .mysql-tool-primary { background:#0078d7; border-color:#006cc1; color:#fff; }
+#mysql-module .mysql-toolbar .mysql-tool-primary:hover { background:#006cc1; }
+#mysql-module .mysql-content {
+  flex:1; min-height:0; overflow-y:auto; display:flex; flex-direction:column;
+  gap:10px; padding:12px; background:#fff;
 }
-
-.submenu {
-    display: none;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    background: #ffffff;
-    border: 1px solid #cfcfcf;
-    min-width: 180px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-    z-index: 100;
-    padding: 4px 0;
+#mysql-module .mysql-summary {
+  min-height:32px; display:flex; flex-wrap:wrap; align-items:center; gap:8px;
+  padding:5px 8px; background:#fff; border:1px solid #ccc;
 }
-
-.menu-item.active .submenu {
-    display: block;
+#mysql-module .mysql-summary-label { color:#555; }
+#mysql-module #mysqlSelectedDatabase {
+  font-weight:600; color:#005cc5; margin-right:auto; overflow-wrap:anywhere;
 }
-
-.submenu div, .submenu a {
-    padding: 8px 12px;
-    font-size: 14px;
-    color: #000;
-    display: block;
-    text-decoration: none;
+#mysql-module .mysql-columns { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:10px; }
+#mysql-module .mysql-card { min-width:0; overflow:hidden; background:#fff; border:1px solid #ccc; }
+#mysql-module .mysql-card-header {
+  min-height:32px; display:flex; align-items:center; gap:8px; padding:5px 10px;
+  background:#eee; border-bottom:1px solid #ccc; font-weight:600;
 }
-
-.submenu div:hover, .submenu a:hover {
-    background: #0078d7;
-    color: #fff;
+#mysql-module .mysql-card-header small { margin-left:auto; color:#777; font-size:11px; font-weight:400; }
+#mysql-module .mysql-list { min-height:78px; padding:0; }
+#mysql-module .mysql-list p { margin:0; padding:15px 10px; color:#777; line-height:1.5; }
+#mysql-module .file-item {
+  min-height:44px; display:flex; align-items:center; justify-content:space-between;
+  gap:10px; padding:6px 10px; border-bottom:1px solid #eee; color:#222;
 }
-
-.content {
-    padding: 30px;
-    flex: 1;
+#mysql-module .file-item:last-child { border-bottom:0; }
+#mysql-module .file-item:hover { background:#f0f6fc; }
+#mysql-module .file-item span { min-width:0; overflow-wrap:anywhere; }
+#mysql-module .file-item > div { display:flex; flex-wrap:wrap; gap:5px; }
+#mysql-module .file-item button { height:26px; min-height:26px; padding:0 9px; white-space:nowrap; }
+#mysql-module .mysql-guide { padding:12px; background:#fff; border:1px solid #ccc; color:#303640; }
+#mysql-module .mysql-guide h3 { margin:0 0 10px; color:#111; font-size:14px; font-weight:600; }
+#mysql-module .mysql-guide h4 { margin:15px 0 7px; font-size:12px; }
+#mysql-module .mysql-guide p { color:#555; line-height:1.6; margin:0 0 8px; }
+#mysql-module .mysql-guide ol { margin:0 0 8px 22px; color:#555; line-height:1.7; }
+#mysql-module .mysql-guide pre { margin:8px 0; padding:10px; overflow-x:auto; border:1px solid #ddd; border-radius:0; background:#f6f6f6; color:#276749; }
+#mysql-module .mysql-guide code { font-family:Consolas,monospace; font-size:12px; }
+#mysql-module .mysql-guide .guide-warning { margin-top:12px; padding:10px; border-left:3px solid #d89b28; background:#fff7e5; color:#72541d; line-height:1.55; }
+#mysql-module .mysql-about-box { position:fixed; inset:0; display:none; align-items:center; justify-content:center; padding:16px; background:rgba(0,0,0,.35); z-index:10000; }
+#mysql-module .mysql-about-window { width:min(400px,100%); background:#fff; color:#222; border:1px solid #888; border-radius:0; box-shadow:0 5px 20px #0004; }
+#mysql-module .mysql-about-header { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:6px 8px; background:#0078d7; color:#fff; border-bottom:1px solid #006cc1; font-weight:600; }
+#mysql-module .mysql-about-body { padding:18px; line-height:1.7; }
+#mysql-module .mysql-about-footer { padding:10px; text-align:right; border-top:1px solid #ddd; }
+@media (max-width:760px) {
+  #mysql-module .mysql-columns { grid-template-columns:1fr; }
+  #mysql-module .mysql-content { padding:8px; gap:8px; }
+  #mysql-module .mysql-status { margin-left:auto; }
 }
-
-.topbar {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 20px;
-}
-
-.logout {
-    text-decoration: none;
-    padding: 8px 15px;
-    border-radius: 8px;
-    background: #ff4b5c;
-    color: white;
-}
-
-.file-list {
-    background: #111;
-    border-radius: 10px;
-    padding: 10px;
-    margin-top: 15px;
-}
-
-.file-item {
-    padding: 10px;
-    border-bottom: 1px solid #222;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.file-item:hover {
-    background: #1e1e1e;
-}
-
-button {
-    padding: 6px 10px;
-    background: #333;
-    border: none;
-    color: #fff;
-    cursor: pointer;
-    border-radius: 5px;
-}
-
-button:hover {
-    background: #555;
-}
-
-/* TUTORIAL MYSQL */
-.mysql-guide {
-    margin-top: 25px;
-    padding: 20px;
-    background: #172a33;
-    border: 1px solid #31515f;
-    border-radius: 10px;
-    color: #eaf2f5;
-}
-
-.mysql-guide h3 {
-    color: #4fc3f7;
-    margin-bottom: 12px;
-}
-
-.mysql-guide h4 {
-    color: #ffffff;
-    margin: 18px 0 8px;
-}
-
-.mysql-guide p {
-    color: #cbd5da;
-    line-height: 1.6;
-    margin-bottom: 10px;
-    font-size: 14px;
-}
-
-.mysql-guide ol {
-    margin-left: 22px;
-    color: #cbd5da;
-    line-height: 1.7;
-}
-
-.mysql-guide pre {
-    background: #080d10;
-    color: #9ee7b0;
-    padding: 12px;
-    border-radius: 6px;
-    overflow-x: auto;
-    margin: 10px 0;
-    border: 1px solid #263b44;
-}
-
-.mysql-guide code {
-    font-family: Consolas, monospace;
-    font-size: 13px;
-}
-
-.mysql-guide .guide-warning {
-    background: #3a2d16;
-    border-left: 4px solid #f0ad4e;
-    padding: 12px;
-    border-radius: 4px;
-    color: #ffe2a8;
-    margin-top: 15px;
-}
-
-/* 🔹 ABOUT BOX */
-.about-box {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.4);
-    display: none;
-    z-index: 9999;
-}
-
-.about-window {
-    width: 400px;
-    background: #f0f0f0;
-    color: #000;
-    border: 1px solid #888;
-    border-radius: 6px;
-    margin: auto;
-    margin-top: 10%;
-    display: flex;
-    flex-direction: column;
-}
-
-.about-header {
-    background: #0078d7;
-    color: white;
-    padding: 8px 10px;
-    font-weight: bold;
-    display: flex;
-    justify-content: space-between;
-}
-
-.about-header button {
-    background: #ff4b5c;
-    border: none;
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
-    font-size: 13px;
-
-    padding: 6px 12px;
-    border-radius: 6px;
-
-    transition: 0.2s;
-}
-
-.about-header button:hover {
-    background: #ff2f44;
-}
-
-.about-body {
-    padding: 20px;
-    font-size: 14px;
-}
-
-.about-footer {
-    padding: 10px;
-    text-align: right;
-    border-top: 1px solid #ccc;
-}
-
-.about-footer button {
-    padding: 6px 14px;
-    border: 1px solid #888;
-    background: #e0e0e0;
-    cursor: pointer;
-}
-
-.footer {
-    background: rgba(0,0,0,0.4);
-    border-top: 1px solid rgba(255,255,255,0.05);
-    padding: 15px;
-    text-align: center;
-    font-size: 13px;
-    color: #aaa;
-}
-
-.footer strong {
-    color: #fff;
+@media (max-width:500px) {
+  #mysql-module .mysql-heading-path { display:none; }
+  #mysql-module .mysql-heading { flex-wrap:wrap; padding:7px 10px; }
+  #mysql-module .mysql-status { width:100%; margin:5px 0 0 29px; }
+  #mysql-module .mysql-toolbar { gap:4px; }
+  #mysql-module .mysql-toolbar button { padding:0 8px; }
+  #mysql-module .file-item { align-items:flex-start; flex-direction:column; }
+  #mysql-module .file-item > div { width:100%; }
 }
 </style>
 </head>
-
 <body>
-
-<div class="main">
-
-<div class="panel">
-<div class="menu">
-
-<div class="menu-item" onclick="toggleMenu(event,this)">
-    File
-    <div class="submenu">
-        <div onclick="window.location.href='/dashboard'">Painel</div>
-        <div onclick="logout()">Logout</div>
+<div id="mysql-module">
+  <div class="mysql-heading">
+    <div class="mysql-heading-icon">🗄️</div>
+    <div><h2>Database Manager</h2></div>
+    <div class="mysql-heading-path">MySQL / Databases</div>
+    <div class="mysql-status" id="mysqlStatus">Status: Carregando...</div>
+  </div>
+  <div class="mysql-toolbar">
+    <button class="mysql-tool-primary" type="button" onclick="MYSQL.startMySQL()">▶ Iniciar MySQL</button>
+    <button type="button" onclick="MYSQL.stopMySQL()">■ Parar MySQL</button>
+    <button type="button" onclick="MYSQL.checkStatus()">↻ Verificar status</button>
+    <button type="button" onclick="MYSQL.loadDatabases()">Atualizar bancos</button>
+    <button type="button" onclick="MYSQL.createDatabase()">＋ Criar banco</button>
+    <button type="button" onclick="MYSQL.selectDatabase()">Selecionar banco</button>
+    <button type="button" onclick="MYSQL.createTable()">＋ Criar tabela</button>
+  </div>
+  <div class="mysql-content">
+    <div class="mysql-summary"><span class="mysql-summary-label">Banco selecionado:</span><span id="mysqlSelectedDatabase">Nenhum</span><button type="button" onclick="MYSQL.loadTables()">Atualizar tabelas</button></div>
+    <div class="mysql-columns">
+      <section class="mysql-card">
+        <div class="mysql-card-header"><span>🗄️ Bancos de dados</span><small>Selecionar ou excluir</small></div>
+        <div class="mysql-list" id="mysqlDatabaseList"><p>Carregando bancos de dados...</p></div>
+      </section>
+      <section class="mysql-card">
+        <div class="mysql-card-header"><span>📋 Tabelas</span><small>Banco selecionado</small></div>
+        <div class="mysql-list" id="mysqlTableList"><p>Selecione um banco de dados para visualizar suas tabelas.</p></div>
+      </section>
     </div>
+    <section class="mysql-guide">
+      <h3>Instalar serviço MySQL no Windows</h3>
+      <p>Se o MySQL já estiver instalado no computador, mas não aparecer como serviço do Windows, siga as etapas abaixo para registrá-lo.</p>
+      <h4>1. Abra o PowerShell como administrador</h4>
+      <ol><li>Abra o menu Iniciar do Windows.</li><li>Pesquise por PowerShell.</li><li>Clique com o botão direito e selecione <strong>Executar como administrador</strong>.</li></ol>
+      <h4>2. Localize o executável mysqld.exe</h4><p>Execute o comando abaixo para verificar se o MySQL está disponível no PATH:</p>
+      <pre><code>where.exe mysqld</code></pre><p>Se o comando não encontrar o arquivo, localize a pasta de instalação. Um caminho comum é:</p>
+      <pre><code>C:\Program Files\MySQL\MySQL Server 8.0\bin\mysqld.exe</code></pre>
+      <h4>3. Registre o serviço MySQL</h4><p>Ajuste o caminho do executável conforme a instalação do seu computador e execute:</p>
+      <pre><code>&amp; "C:\Program Files\MySQL\MySQL Server 8.0\bin\mysqld.exe" --install MySQL80</code></pre>
+      <h4>4. Inicie o serviço</h4><pre><code>Start-Service MySQL80</code></pre>
+      <h4>5. Verifique o status</h4><pre><code>Get-Service MySQL80</code></pre><p>Se o serviço estiver funcionando, o status deverá aparecer como <strong>Running</strong>.</p>
+      <h4>6. Configure a inicialização automática</h4><pre><code>Set-Service MySQL80 -StartupType Automatic</code></pre>
+      <div class="guide-warning"><strong>Atenção:</strong> Este procedimento registra um serviço do Windows para uma instalação existente do MySQL. Ele não instala o servidor MySQL, não cria o diretório de dados e não configura a senha do usuário root. Se o serviço já estiver registrado, não execute novamente o comando <code>--install</code>. O nome <code>MySQL80</code> deve corresponder ao nome configurado no backend Flask.</div>
+    </section>
+  </div>
+  <div class="mysql-about-box" id="mysqlAboutBox" role="dialog" aria-modal="true" aria-label="Sobre o Database Manager">
+    <div class="mysql-about-window"><div class="mysql-about-header"><span>Sobre o PyPanel</span><button type="button" onclick="MYSQL.closeAbout()">Fechar</button></div><div class="mysql-about-body"><h3>PyPanel Flask</h3><p>Versão: 1.0</p><p>Desenvolvedor: Qubit</p><p>Database Manager integrado ao painel principal.</p></div><div class="mysql-about-footer"><button type="button" onclick="MYSQL.closeAbout()">OK</button></div></div>
+  </div>
 </div>
-
-<div class="menu-item" onclick="toggleMenu(event, this)">
-    MySQL
-    <div class="submenu">
-        <div onclick="startMySQL()">Start Server</div>
-        <div onclick="stopMySQL()">Stop Server</div>
-        <div onclick="checkStatus()">Status</div>
-    </div>
-</div>
-
-<div class="menu-item" onclick="toggleMenu(event, this)">
-    Database
-    <div class="submenu">
-        <div onclick="createTable()">Criar Tabela</div>
-        <div onclick="loadTables()">Atualizar</div>
-    </div>
-</div>
-
-<div class="menu-item" onclick="toggleMenu(this)">Settings
-    <div class="submenu">
-        <div onclick="log('Opening settings')">Preferences</div>
-        <div onclick="toggleServerLog()">Server Log</div>
-    </div>
-</div>
-
-<div class="menu-item" onclick="toggleMenu(event, this)">
-    Help
-    <div class="submenu">
-        <div onclick="openAbout()">About</div>
-    </div>
-</div>
-
-</div>
-</div>
-
-<div class="content">
-<div class="topbar">
-<h2>MySQL Manager</h2>
-<a href="/logout" class="logout">Logout</a>
-</div>
-
-<p id="status">Status: Carregando...</p>
-
-<div class="file-list" id="tableList"></div>
-
-<!-- TUTORIAL DE INSTALAÇÃO DO SERVIÇO MYSQL -->
-<div class="mysql-guide">
-    <h3>Instalar serviço MySQL no Windows</h3>
-
-    <p>
-        Se o MySQL já estiver instalado no computador, mas não aparecer como
-        serviço do Windows, siga as etapas abaixo para registrá-lo.
-    </p>
-
-    <h4>1. Abra o PowerShell como administrador</h4>
-    <ol>
-        <li>Abra o menu Iniciar do Windows.</li>
-        <li>Pesquise por PowerShell.</li>
-        <li>Clique com o botão direito e selecione <strong>Executar como administrador</strong>.</li>
-    </ol>
-
-    <h4>2. Localize o executável mysqld.exe</h4>
-    <p>Execute o comando abaixo para verificar se o MySQL está disponível no PATH:</p>
-
-    <pre><code>where.exe mysqld</code></pre>
-
-    <p>
-        Se o comando não encontrar o arquivo, localize a pasta de instalação.
-        Um caminho comum é:
-    </p>
-
-    <pre><code>C:\Program Files\MySQL\MySQL Server 8.0\bin\mysqld.exe</code></pre>
-
-    <h4>3. Registre o serviço MySQL</h4>
-    <p>
-        Ajuste o caminho do executável conforme a instalação do seu computador
-        e execute:
-    </p>
-
-    <pre><code>&amp; "C:\Program Files\MySQL\MySQL Server 8.0\bin\mysqld.exe" --install MySQL80</code></pre>
-
-    <h4>4. Inicie o serviço</h4>
-
-    <pre><code>Start-Service MySQL80</code></pre>
-
-    <h4>5. Verifique o status</h4>
-
-    <pre><code>Get-Service MySQL80</code></pre>
-
-    <p>
-        Se o serviço estiver funcionando, o status deverá aparecer como
-        <strong>Running</strong>.
-    </p>
-
-    <h4>6. Configure a inicialização automática</h4>
-
-    <pre><code>Set-Service MySQL80 -StartupType Automatic</code></pre>
-
-    <div class="guide-warning">
-        <strong>Atenção:</strong>
-        Este procedimento registra um serviço do Windows para uma instalação
-        existente do MySQL. Ele não instala o servidor MySQL, não cria o diretório
-        de dados e não configura a senha do usuário root. Se o serviço já estiver
-        registrado, não execute novamente o comando <code>--install</code>.
-        O nome <code>MySQL80</code> deve corresponder ao nome configurado no
-        backend Flask.
-    </div>
-</div>
-
-</div>
-
-<div class="footer">
-<p><strong>PyPanel Flask</strong> • v1.0</p>
-</div>
-
-</div>
-
-<!-- ABOUT BOX -->
-<div class="about-box" id="aboutBox">
-    <div class="about-window">
-        <div class="about-header">
-            About PhyPanel
-            <button onclick="closeAbout()">Close</button>
-        </div>
-        <div class="about-body">
-            <h3>PhyPanel</h3>
-            <p>Version: 1.0</p>
-            <p>Developer: Qubit</p>
-            <br>
-            <p>File Manager integrado ao painel local.</p>
-        </div>
-        <div class="about-footer">
-            <button onclick="closeAbout()">OK</button>
-        </div>
-    </div>
-</div>
-
 <script>
-document.addEventListener("click", () => {
-    document.querySelectorAll(".menu-item").forEach(m => m.classList.remove("active"));
-});
-
-function toggleMenu(event, el){
-    event.stopPropagation();
-    const isActive = el.classList.contains("active");
-    document.querySelectorAll(".menu-item").forEach(m => m.classList.remove("active"));
-    if(!isActive){
-        el.classList.add("active");
-    }
-}
-
+(function () {
 async function api(url, options = {}){
-    try{
-        const res = await fetch(url, options);
-        if(!res.ok) throw new Error("Erro HTTP");
-        return await res.text();
-    }catch(e){
-        console.error(e);
-        return "Erro";
-    }
+    return apiJson(url, options);
 }
 
 // MySQL
 async function startMySQL(){
-    const res = await api("/start_mysql");
-    if(res) alert(res);
-    checkStatus();
+    try{
+        const result = await apiJson("/start_mysql");
+        alert(result.message || "Solicitação de inicialização enviada.");
+    }catch(error){
+        alert("Não foi possível iniciar o MySQL: " + error.message);
+    }finally{
+        await checkStatus();
+    }
 }
 
 async function stopMySQL(){
-    const res = await api("/stop_mysql");
-    if(res) alert(res);
-    checkStatus();
+    try{
+        const result = await apiJson("/stop_mysql");
+        alert(result.message || "Solicitação para parar o MySQL enviada.");
+    }catch(error){
+        alert("Não foi possível parar o MySQL: " + error.message);
+    }finally{
+        await checkStatus();
+    }
 }
 
 async function checkStatus(){
-    const status = await api("/mysql_status");
-    document.getElementById("status").innerText = "Status: " + status;
+    const statusElement = document.getElementById("mysqlStatus");
+
+    try{
+        const result = await apiJson("/mysql_status");
+        const status = typeof result === "string"
+            ? result
+            : (result.status || (result.success ? "Online" : "Offline"));
+
+        statusElement.textContent = "Status: " + status;
+    }catch(error){
+        statusElement.textContent = "Status: Offline — " + error.message;
+        console.error("[MYSQL STATUS]", error);
+    }
+}
+
+let mysqlSelectedDatabase = null;
+
+async function apiJson(url, options = {}){
+    const response = await fetch(url, {
+        credentials: "same-origin",
+        ...options
+    });
+
+    const contentType = response.headers.get("content-type") || "";
+    let data;
+
+    if(contentType.includes("application/json")){
+        data = await response.json().catch(() => ({}));
+    }else{
+        const text = await response.text();
+        data = text ? {message: text} : {};
+    }
+
+    // login_required pode redirecionar fetch para a página de login,
+    // que retorna HTML com status 200. Detectamos esse caso explicitamente.
+    if(response.redirected && /login/i.test(response.url)){
+        throw new Error("Sessão expirada. Faça login novamente no painel.");
+    }
+
+    if(!response.ok){
+        const message = data.error || data.message ||
+            (typeof data === "string" ? data : `Erro HTTP ${response.status}`);
+        throw new Error(message);
+    }
+
+    if(data && data.success === false){
+        throw new Error(data.error || data.message || "A operação não foi concluída.");
+    }
+
+    return data;
+}
+
+async function loadDatabases(){
+    const list = document.getElementById("mysqlDatabaseList");
+    list.innerHTML = "<p>Carregando bancos de dados...</p>";
+    try{
+        const result = await apiJson("/databases");
+        const databases = Array.isArray(result) ? result : (result.databases || []);
+        list.innerHTML = "";
+        if(databases.length === 0){
+            list.innerHTML = "<p>Nenhum banco de dados encontrado.</p>";
+            return;
+        }
+        databases.forEach(item => {
+            const name = typeof item === "string" ? item : item.name;
+            const row = document.createElement("div");
+            row.className = "file-item";
+            const label = document.createElement("span");
+            label.textContent = "🗄️ " + name;
+            const actions = document.createElement("div");
+            actions.style.display = "flex";
+            actions.style.gap = "8px";
+            const selectButton = document.createElement("button");
+            selectButton.textContent = "Selecionar";
+            selectButton.onclick = () => chooseDatabase(name);
+            const deleteButton = document.createElement("button");
+            deleteButton.textContent = "Excluir";
+            deleteButton.onclick = () => deleteDatabase(name);
+            actions.append(selectButton, deleteButton);
+            row.append(label, actions);
+            list.appendChild(row);
+        });
+    }catch(error){
+        list.textContent = "";
+        const message = document.createElement("p");
+        message.textContent = "Não foi possível carregar os bancos: " + error.message;
+        list.appendChild(message);
+        console.error("[LOAD DATABASES]", error);
+    }
+}
+
+function chooseDatabase(name){
+    mysqlSelectedDatabase = name;
+    document.getElementById("mysqlSelectedDatabase").textContent = name;
+    loadTables();
+}
+
+async function selectDatabase(){
+    try{
+        const result = await apiJson("/databases");
+        const databases = Array.isArray(result) ? result : (result.databases || []);
+        const names = databases.map(item => typeof item === "string" ? item : item.name);
+        if(names.length === 0){
+            alert("Não existem bancos de dados disponíveis.");
+            return;
+        }
+        const choice = prompt("Digite o nome do banco de dados:\n\n" + names.join("\n"));
+        if(!choice) return;
+        if(!names.includes(choice)){
+            alert("Banco de dados não encontrado na lista.");
+            return;
+        }
+        chooseDatabase(choice);
+    }catch(error){
+        alert("Erro ao consultar bancos: " + error.message);
+    }
+}
+
+async function createDatabase(){
+    const inputName = prompt("Nome do novo banco de dados:");
+    if(!inputName) return;
+    const name = inputName.trim();
+    if(!name) return;
+    try{
+        await apiJson("/create_database", {
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({name})
+        });
+        alert("Banco de dados criado com sucesso.");
+        await loadDatabases();
+        chooseDatabase(name);
+    }catch(error){
+        alert("Não foi possível criar o banco: " + error.message);
+    }
+}
+
+async function deleteDatabase(name){
+    if(!confirm(`Deseja realmente excluir o banco "${name}" e todos os seus dados? Esta ação não pode ser desfeita.`)) return;
+    try{
+        await apiJson("/delete_database/" + encodeURIComponent(name), {method:"DELETE"});
+        if(mysqlSelectedDatabase === name){
+            mysqlSelectedDatabase = null;
+            document.getElementById("mysqlSelectedDatabase").textContent = "Nenhum";
+            document.getElementById("mysqlTableList").innerHTML = "<p>Selecione um banco de dados para visualizar suas tabelas.</p>";
+        }
+        await loadDatabases();
+    }catch(error){
+        alert("Não foi possível excluir o banco: " + error.message);
+    }
 }
 
 async function loadTables(){
+    const list = document.getElementById("mysqlTableList");
+    if(!mysqlSelectedDatabase){
+        list.innerHTML = "<p>Selecione um banco de dados para visualizar suas tabelas.</p>";
+        return;
+    }
+    list.innerHTML = "<p>Carregando tabelas...</p>";
     try{
-        const res = await fetch("/tables");
-        const tables = await res.json();
-
-        const list = document.getElementById("tableList");
+        const result = await apiJson("/tables?database=" + encodeURIComponent(mysqlSelectedDatabase));
+        const tables = Array.isArray(result) ? result : (result.tables || []);
         list.innerHTML = "";
-
         if(tables.length === 0){
-            list.innerHTML = "<p>Nenhuma tabela encontrada</p>";
+            list.innerHTML = "<p>Nenhuma tabela encontrada neste banco.</p>";
             return;
         }
-
-        tables.forEach(t=>{
-            const div = document.createElement("div");
-            div.className = "file-item";
-            div.innerHTML = `
-                🗄️ ${t}
-                <button onclick="deleteTable('${t}')">Delete</button>
-            `;
-            list.appendChild(div);
+        tables.forEach(item => {
+            const name = typeof item === "string" ? item : item.name;
+            const row = document.createElement("div");
+            row.className = "file-item";
+            const label = document.createElement("span");
+            label.textContent = "📋 " + name;
+            const deleteButton = document.createElement("button");
+            deleteButton.textContent = "Excluir tabela";
+            deleteButton.onclick = () => deleteTable(name);
+            row.append(label, deleteButton);
+            list.appendChild(row);
         });
-
-    }catch(e){
-        console.error(e);
+    }catch(error){
+        list.textContent = "";
+        const message = document.createElement("p");
+        message.textContent = "Erro ao carregar tabelas: " + error.message;
+        list.appendChild(message);
+        console.error("[LOAD TABLES]", error);
     }
 }
 
 async function createTable(){
-    let name = prompt("Nome da tabela:");
+    if(!mysqlSelectedDatabase){
+        alert("Selecione um banco de dados primeiro.");
+        return;
+    }
+    const name = prompt("Nome da nova tabela:");
     if(!name) return;
-
-    await fetch("/create_table", {
-        method:"POST",
-        headers:{"Content-Type":"application/json"},
-        body: JSON.stringify({name})
-    });
-
-    loadTables();
+    try{
+        await apiJson("/create_table", {
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({name, database:mysqlSelectedDatabase})
+        });
+        await loadTables();
+    }catch(error){
+        alert("Não foi possível criar a tabela: " + error.message);
+    }
 }
 
 async function deleteTable(name){
-    if(confirm("Deletar tabela?")){
-        await fetch("/delete_table/"+name);
-        loadTables();
+    if(!mysqlSelectedDatabase) return;
+    if(!confirm(`Excluir a tabela "${name}" do banco "${mysqlSelectedDatabase}"?`)) return;
+    try{
+        await apiJson("/delete_table/" + encodeURIComponent(name) +
+            "?database=" + encodeURIComponent(mysqlSelectedDatabase), {method:"DELETE"});
+        await loadTables();
+    }catch(error){
+        alert("Não foi possível excluir a tabela: " + error.message);
     }
 }
 
@@ -519,11 +402,11 @@ function logout(){
 
 /* ABOUT */
 function openAbout(){
-    document.getElementById("aboutBox").style.display = "block";
+    document.getElementById("mysqlAboutBox").style.display = "block";
 }
 
 function closeAbout(){
-    const box = document.getElementById("aboutBox");
+    const box = document.getElementById("mysqlAboutBox");
     if(!box) return;
 
     // compatibilidade melhor entre browsers
@@ -531,9 +414,15 @@ function closeAbout(){
     box.classList.remove("active");
 }
 
-checkStatus();
-loadTables();
-</script>
 
+window.MYSQL = {
+    startMySQL, stopMySQL, checkStatus, loadDatabases, createDatabase,
+    selectDatabase, loadTables, createTable, openAbout, closeAbout, logout
+};
+
+checkStatus();
+loadDatabases();
+})();
+</script>
 </body>
 </html>

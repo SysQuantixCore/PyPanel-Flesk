@@ -1,765 +1,1767 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>File Manager</title>
 
-<style>
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: Arial, sans-serif;
-}
+    <meta charset="UTF-8">
 
-body {
-    display: flex;
-    height: 100vh;
-    background: #0f2027;
-    color: #fff;
-}
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
 
-.main {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-}
+    <title>File Manager</title>
 
-.panel {
-    width: 100%;
-    background: #f3f3f3;
-    border-bottom: 1px solid #cfcfcf;
-}
 
-.menu {
-    display: flex;
-    padding-left: 10px;
-}
+    <style>
 
-.menu-item {
-    position: relative;
-    padding: 8px 14px;
-    cursor: pointer;
-    color: #000;
-    font-size: 14px;
-    user-select: none;
-}
+        #filemanager-module {
+            width: 100%;
+            height: 100%;
 
-.menu-item:hover {
-    background: #e5f1fb;
-    border: 1px solid #0078d7;
-    border-bottom: none;
-}
+            display: flex;
+            flex-direction: column;
 
-.submenu {
-    display: none;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    background: #ffffff;
-    border: 1px solid #cfcfcf;
-    min-width: 180px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-    z-index: 100;
-    padding: 4px 0;
-}
+            background: #fff;
 
-.menu-item.active .submenu {
-    display: block;
-}
+            color: #111;
 
-.submenu div {
-    padding: 8px 12px;
-    font-size: 14px;
-    color: #000;
-    cursor: pointer;
-}
+            font-family:
+                "Segoe UI",
+                Tahoma,
+                Arial,
+                sans-serif;
+        }
 
-.submenu div:hover {
-    background: #0078d7;
-    color: #fff;
-}
 
-.separator {
-    height: 1px;
-    background: #ddd;
-    margin: 5px 0;
-}
+        #filemanager-module * {
+            box-sizing: border-box;
+        }
 
-.content {
-    padding: 30px;
-    flex: 1;
-}
 
-.topbar {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 20px;
-}
+        .fm-toolbar {
+            min-height: 38px;
 
-.logout {
-    text-decoration: none;
-    padding: 8px 15px;
-    border-radius: 8px;
-    background: #ff4b5c;
-    color: white;
-}
+            display: flex;
+            align-items: center;
 
-.file-toolbar {
-    margin-bottom: 15px;
-}
+            gap: 5px;
 
-.file-toolbar button {
-    padding: 8px 12px;
-    margin-right: 10px;
-    border: none;
-    border-radius: 6px;
-    background: #1e1e1e;
-    color: #fff;
-    cursor: pointer;
-}
+            padding: 5px 8px;
 
-.file-path {
-    margin-bottom: 10px;
-    font-size: 14px;
-    color: #aaa;
-}
+            background: #f5f5f5;
 
-.file-list {
-    background: #111;
-    border-radius: 10px;
-    overflow: hidden;
-}
+            border-bottom: 1px solid #c8c8c8;
+        }
 
-.file-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 14px 16px;
-    border-bottom: 1px solid #222;
-    transition: 0.2s;
-}
 
-.file-item:hover {
-    background: #1a1a1a;
-}
+        .fm-button {
+            height: 28px;
 
-.file-name {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    font-size: 15px;
-}
+            padding: 0 12px;
 
-.file-name span {
-    color: #888;
-    font-size: 12px;
-}
+            border: 1px solid #b8b8b8;
 
-.file-actions {
-    display: flex;
-    gap: 8px;
-}
+            background: #fff;
 
-.file-actions button {
-    border: none;
-    padding: 6px 10px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 12px;
-    transition: 0.2s;
-}
+            color: #111;
 
-.file-actions button:first-child {
-    background: #0078d7;
-    color: #fff;
-}
+            cursor: pointer;
 
-.file-actions button:first-child:hover {
-    background: #005fa3;
-}
+            font-family:
+                "Segoe UI",
+                Tahoma,
+                Arial,
+                sans-serif;
+        }
 
-.file-actions button:last-child {
-    background: #ff4b5c;
-    color: #fff;
-}
 
-.file-actions button:last-child:hover {
-    background: #d63b4a;
-}
+        .fm-button:hover {
+            background: #e8f1fb;
 
-.grid-mode .file-item {
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    border: 1px solid #222;
-    border-radius: 10px;
-    padding: 15px;
-}
+            border-color: #0078d7;
+        }
 
-.grid-mode .file-name {
-    align-items: center;
-}
 
-.grid-mode .file-actions {
-    margin-top: 10px;
-    justify-content: center;
-}
+        .fm-button.primary {
+            background: #0078d7;
 
-.grid-mode .file-actions button {
-    width: 70px;
-}
+            border-color: #006cc1;
 
-.server-log {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.35);
-    display: none;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-}
+            color: #fff;
+        }
 
-.server-log.active {
-    display: flex;
-}
 
-.server-log-panel {
-    width: 700px;
-    height: 500px;
-    background: #f0f0f0;
-    border: 1px solid #888;
-    border-radius: 6px;
-    margin: auto;
-    margin-top: 10%;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-}
+        .fm-button.primary:hover {
+            background: #006cc1;
+        }
 
-.server-log-header {
-    background: #0078d7;
-    color: white;
-    padding: 8px 10px;
-    font-weight: bold;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
 
-.server-log-header button {
-    background: #ff4b5c;
-    border: none;
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
-    font-size: 13px;
-    padding: 6px 12px;
-    border-radius: 6px;
-    transition: 0.2s;
-}
+        .fm-header {
+            min-height: 46px;
 
-.server-log-header button:hover {
-    background: #ff2f44;
-}
+            display: flex;
+            align-items: center;
 
-.server-log-body {
-    flex: 1;
-    padding: 12px;
-    background: #ffffff;
-    color: #000;
-    font-size: 13px;
-    overflow-y: auto;
-}
+            padding: 0 12px;
 
-.about-box {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.4);
-    display: none;
-    z-index: 9999;
-}
+            background: #f7f7f7;
 
-.about-window {
-    width: 400px;
-    background: #f0f0f0;
-    color: #000;
-    border: 1px solid #888;
-    border-radius: 6px;
-    margin: auto;
-    margin-top: 10%;
-    display: flex;
-    flex-direction: column;
-}
+            border-bottom: 1px solid #ccc;
+        }
 
-.about-header {
-    background: #0078d7;
-    color: white;
-    padding: 8px 10px;
-    font-weight: bold;
-    display: flex;
-    justify-content: space-between;
-}
 
-.about-header button {
-    background: #ff4b5c;
-    border: none;
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
-    font-size: 13px;
-    padding: 6px 12px;
-    border-radius: 6px;
-    transition: 0.2s;
-}
+        .fm-header-icon {
+            margin-right: 9px;
 
-.about-header button:hover {
-    background: #ff2f44;
-}
+            font-size: 20px;
+        }
 
-.about-body {
-    padding: 20px;
-    font-size: 14px;
-}
 
-.about-footer {
-    padding: 10px;
-    text-align: right;
-    border-top: 1px solid #ccc;
-}
+        .fm-header-title {
+            font-size: 15px;
 
-.about-footer button {
-    padding: 6px 14px;
-    border: 1px solid #888;
-    background: #e0e0e0;
-    cursor: pointer;
-}
+            font-weight: 600;
+        }
 
-.footer {
-    background: #111;
-    border-top: 1px solid #333;
-    padding: 15px;
-    text-align: center;
-    font-size: 14px;
-    color: #aaa;
-}
 
-.footer strong {
-    color: #fff;
-}
-</style>
+        .fm-header-path {
+            margin-left: 12px;
+
+            color: #777;
+
+            font-family:
+                Consolas,
+                "Courier New",
+                monospace;
+
+            font-size: 12px;
+        }
+
+
+        .fm-content {
+            flex: 1;
+            min-height: 0;
+
+            display: flex;
+            flex-direction: column;
+
+            padding: 12px;
+
+            overflow: hidden;
+        }
+
+
+        .fm-path {
+            min-height: 32px;
+
+            display: flex;
+            align-items: center;
+
+            padding: 5px 8px;
+
+            margin-bottom: 8px;
+
+            background: #fff;
+
+            border: 1px solid #ccc;
+
+            color: #333;
+
+            font-family:
+                Consolas,
+                "Courier New",
+                monospace;
+
+            cursor: pointer;
+        }
+
+
+        .fm-path:hover {
+            border-color: #0078d7;
+
+            background: #f8fbff;
+        }
+
+
+        .fm-path-input {
+            width: 100%;
+
+            height: 25px;
+
+            padding: 3px 6px;
+
+            border: 1px solid #0078d7;
+
+            outline: none;
+
+            font-family:
+                Consolas,
+                "Courier New",
+                monospace;
+        }
+
+
+        .fm-list {
+            flex: 1;
+            min-height: 0;
+
+            overflow-y: auto;
+
+            background: #fff;
+
+            border: 1px solid #ccc;
+        }
+
+
+        .fm-list-header {
+            height: 32px;
+
+            display: grid;
+
+            grid-template-columns:
+                minmax(200px, 1fr)
+                180px
+                150px;
+
+            align-items: center;
+
+            padding: 0 10px;
+
+            background: #eeeeee;
+
+            border-bottom: 1px solid #ccc;
+
+            font-weight: 600;
+        }
+
+
+        .fm-file-item {
+            min-height: 48px;
+
+            display: grid;
+
+            grid-template-columns:
+                minmax(200px, 1fr)
+                180px
+                150px;
+
+            align-items: center;
+
+            padding: 5px 10px;
+
+            border-bottom: 1px solid #eeeeee;
+        }
+
+
+        .fm-file-item:hover {
+            background: #f0f6fc;
+        }
+
+
+        .fm-file-name {
+            display: flex;
+
+            align-items: center;
+
+            min-width: 0;
+        }
+
+
+        .fm-file-icon {
+            width: 30px;
+
+            flex-shrink: 0;
+
+            text-align: center;
+
+            font-size: 18px;
+        }
+
+
+        .fm-file-text {
+            min-width: 0;
+        }
+
+
+        .fm-file-title {
+            overflow: hidden;
+
+            text-overflow: ellipsis;
+
+            white-space: nowrap;
+
+            color: #005cc5;
+
+            cursor: pointer;
+        }
+
+
+        .fm-file-title:hover {
+            text-decoration: underline;
+        }
+
+
+        .fm-file-date {
+            color: #777;
+
+            font-size: 11px;
+        }
+
+
+        .fm-file-actions {
+            display: flex;
+
+            justify-content: flex-end;
+
+            gap: 5px;
+        }
+
+
+        .fm-action {
+            height: 26px;
+
+            padding: 0 9px;
+
+            border: 1px solid #aaa;
+
+            background: #fff;
+
+            cursor: pointer;
+
+            font-size: 12px;
+        }
+
+
+        .fm-action:hover {
+            background: #e8f1fb;
+
+            border-color: #0078d7;
+        }
+
+
+        .fm-action.delete:hover {
+            background: #fde7e9;
+
+            border-color: #e81123;
+
+            color: #b00020;
+        }
+
+
+        .fm-empty {
+            padding: 35px;
+
+            text-align: center;
+
+            color: #777;
+        }
+
+
+        .fm-grid-mode {
+            display: grid;
+
+            grid-template-columns:
+                repeat(
+                    auto-fill,
+                    minmax(170px, 1fr)
+                );
+
+            gap: 8px;
+
+            padding: 8px;
+
+            align-content: start;
+        }
+
+
+        .fm-grid-mode .fm-list-header {
+            display: none;
+        }
+
+
+        .fm-grid-mode .fm-file-item {
+            min-height: 145px;
+
+            display: flex;
+
+            flex-direction: column;
+
+            justify-content: center;
+
+            align-items: center;
+
+            padding: 12px;
+
+            border: 1px solid #ddd;
+
+            background: #fafafa;
+        }
+
+
+        .fm-grid-mode .fm-file-item:hover {
+            background: #f0f6fc;
+
+            border-color: #99cfff;
+        }
+
+
+        .fm-grid-mode .fm-file-name {
+            flex-direction: column;
+
+            justify-content: center;
+
+            text-align: center;
+        }
+
+
+        .fm-grid-mode .fm-file-icon {
+            width: auto;
+
+            margin-bottom: 8px;
+
+            font-size: 32px;
+        }
+
+
+        .fm-grid-mode .fm-file-title {
+            max-width: 145px;
+        }
+
+
+        .fm-grid-mode .fm-file-date {
+            margin-top: 4px;
+        }
+
+
+        .fm-grid-mode .fm-file-actions {
+            margin-top: 12px;
+
+            justify-content: center;
+        }
+
+
+        .fm-status {
+            min-height: 25px;
+
+            display: flex;
+            align-items: center;
+
+            padding: 0 8px;
+
+            margin-top: 8px;
+
+            background: #eeeeee;
+
+            border: 1px solid #ccc;
+
+            color: #666;
+
+            font-size: 11px;
+        }
+
+
+        .fm-server-log {
+            position: fixed;
+
+            inset: 0;
+
+            display: none;
+
+            align-items: center;
+            justify-content: center;
+
+            background:
+                rgba(
+                    0,
+                    0,
+                    0,
+                    0.35
+                );
+
+            z-index: 99999;
+        }
+
+
+        .fm-server-log.active {
+            display: flex;
+        }
+
+
+        .fm-server-log-panel {
+            width: 700px;
+
+            max-width: 90%;
+
+            height: 500px;
+
+            max-height: 80%;
+
+            display: flex;
+            flex-direction: column;
+
+            background: #f0f0f0;
+
+            border: 1px solid #888;
+
+            box-shadow:
+                0 5px 20px
+                rgba(
+                    0,
+                    0,
+                    0,
+                    0.3
+                );
+        }
+
+
+        .fm-server-log-header {
+            min-height: 34px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 0 8px;
+
+            background: #0078d7;
+
+            color: #fff;
+
+            font-weight: bold;
+        }
+
+
+        .fm-server-log-close {
+            padding: 4px 10px;
+
+            border: 0;
+
+            background: #e81123;
+
+            color: #fff;
+
+            cursor: pointer;
+        }
+
+
+        .fm-server-log-body {
+            flex: 1;
+
+            padding: 10px;
+
+            overflow-y: auto;
+
+            background: #fff;
+
+            color: #000;
+
+            font-family:
+                Consolas,
+                "Courier New",
+                monospace;
+
+            font-size: 12px;
+
+            line-height: 1.5;
+        }
+
+
+        @media (max-width: 700px) {
+
+            .fm-list-header {
+                grid-template-columns:
+                    minmax(150px, 1fr)
+                    130px;
+            }
+
+
+            .fm-list-header div:nth-child(2) {
+                display: none;
+            }
+
+
+            .fm-file-item {
+                grid-template-columns:
+                    minmax(150px, 1fr)
+                    130px;
+            }
+
+
+            .fm-file-date {
+                display: none;
+            }
+
+        }
+
+
+        @media (max-width: 500px) {
+
+            .fm-content {
+                padding: 8px;
+            }
+
+
+            .fm-list-header {
+                display: none;
+            }
+
+
+            .fm-file-item {
+                display: flex;
+
+                justify-content: space-between;
+
+                gap: 8px;
+            }
+
+
+            .fm-file-actions {
+                flex-shrink: 0;
+            }
+
+
+            .fm-action {
+                padding: 0 6px;
+            }
+
+
+            .fm-header-path {
+                display: none;
+            }
+
+        }
+
+    </style>
+
 </head>
+
 
 <body>
 
-<div class="main">
+<div id="filemanager-module">
 
-<div class="panel">
-<div class="menu">
 
-<div class="menu-item" onclick="toggleMenu(this)">File
-    <div class="submenu">
-        <div onclick="window.location.href='/dashboard'">Painel</div>
-        <div onclick="upload()">Upload</div>
-        <div onclick="newFolder()">New Folder</div>
-        <div onclick="logout()">Logout</div>
-    </div>
-</div>
+    <div class="fm-header">
 
-<div class="menu-item" onclick="toggleMenu(this)">Edit
-    <div class="submenu">
-        <div>Copy</div>
-        <div>Paste</div>
-        <div>Delete</div>
-    </div>
-</div>
-
-<div class="menu-item" onclick="toggleMenu(this)">View
-    <div class="submenu">
-       <div onclick="setView('list')">List</div>
-       <div onclick="setView('grid')">Grid</div>
-    </div>
-</div>
-
-<div class="menu-item" onclick="toggleMenu(this)">Settings
-    <div class="submenu">
-       <div onclick="log('Opening settings')">Preferences</div>
-       <div onclick="toggleServerLog()">Server Log</div>
-    </div>
-</div>
-            
-<div class="menu-item" onclick="toggleMenu(this)">Help
-    <div class="submenu">
-        <div onclick="openAbout()">About</div>
-    </div>
-</div>
-
-</div>
-</div>
-
-<div class="content">
-
-<div class="topbar">
-<h2>File Manager</h2>
-<a href="/logout" class="logout">Logout</a>
-</div>
-
-<div class="file-toolbar">
-<button onclick="upload()">⬆️ Upload</button>
-<button onclick="newFolder()">📁 New Folder</button>
-</div>
-
-<div class="file-path" id="pathDisplay" onclick="editPath()">
-    /htdocs
-</div>
-
-<div class="file-list" id="fileList"></div>
-
-</div>
-<div class="footer">
-<p><strong>PyPanel Flask</strong></p>
-<p>Version: 1.0 | Web</p>
-</div>
-</div>
-
-<div class="server-log" id="serverLog">
-    <div class="server-log-panel">
-        <div class="server-log-header">
-            Server log console
-            <button onclick="closeServerLog()">Close</button>
+        <div class="fm-header-icon">
+            📁
         </div>
-        <div class="server-log-body" id="serverLogBody"></div>
+
+        <div class="fm-header-title">
+            File Manager
+        </div>
+
+        <div
+            class="fm-header-path"
+            id="fmHeaderPath">
+            /htdocs
+        </div>
+
     </div>
+
+
+    <div class="fm-toolbar">
+
+        <button
+            class="fm-button primary"
+            onclick="FM.upload()">
+            ⬆ Upload
+        </button>
+
+
+        <button
+            class="fm-button"
+            onclick="FM.newFolder()">
+            📁 New Folder
+        </button>
+
+
+        <button
+            class="fm-button"
+            onclick="FM.setView('list')">
+            ☷ List
+        </button>
+
+
+        <button
+            class="fm-button"
+            onclick="FM.setView('grid')">
+            ▦ Grid
+        </button>
+
+
+        <button
+            class="fm-button"
+            onclick="FM.refresh()">
+            ↻ Refresh
+        </button>
+
+
+        <button
+            class="fm-button"
+            onclick="FM.toggleServerLog()">
+            Server Log
+        </button>
+
+    </div>
+
+
+    <div class="fm-content">
+
+
+        <div
+            class="fm-path"
+            id="fmPath"
+            onclick="FM.editPath()">
+            /htdocs
+        </div>
+
+
+        <div
+            class="fm-list"
+            id="fmFileList">
+
+            <div class="fm-empty">
+                Loading...
+            </div>
+
+        </div>
+
+
+        <div
+            class="fm-status"
+            id="fmStatus">
+            Ready
+        </div>
+
+    </div>
+
+
 </div>
 
-<div class="about-box" id="aboutBox">
-    <div class="about-window">
-        <div class="about-header">
-            About PhyPanel
-            <button onclick="closeAbout()">Close</button>
+
+<div
+    class="fm-server-log"
+    id="fmServerLog">
+
+    <div class="fm-server-log-panel">
+
+        <div class="fm-server-log-header">
+
+            <span>
+                Server Log
+            </span>
+
+            <button
+                class="fm-server-log-close"
+                onclick="FM.closeServerLog()">
+                Close
+            </button>
+
         </div>
-        <div class="about-body">
-<h3>PyPanel Flesk</h3>
-            <p>Version: 1.0</p>
-            <!-- BROWSER INFO -->
-            <p id="browserInfo">Browser: Detectando...</p>            
-            <p>Developer: Qubit</p>
-            <br>
-            <p>
-            A lightweight and flexible web-based application built with Python
-            and Flask, providing an intuitive interface for local management
-            and system administration.
-            </p> 
+
+
+        <div
+            class="fm-server-log-body"
+            id="fmServerLogBody">
         </div>
-        <div class="about-footer">
-            <button onclick="closeAbout()">OK</button>
-        </div>
+
     </div>
+
 </div>
+
 
 <script>
-function toggleMenu(el){
-    const isOpen = el.classList.contains("active");
 
-    document.querySelectorAll(".menu-item").forEach(m => {
-        m.classList.remove("active");
-    });
+(function () {
 
-    if(!isOpen){
-        el.classList.add("active");
-    }
-}
+    const FM = {};
 
-document.querySelectorAll(".menu-item").forEach(item=>{
-    item.addEventListener("mouseenter", ()=>{
-        if(document.querySelector(".menu-item.active")){
-            document.querySelectorAll(".menu-item").forEach(m=>m.classList.remove("active"));
-            item.classList.add("active");
-        }
-    });
-});
+    let currentPath = "/htdocs";
 
-document.addEventListener("click", e=>{
-    if(!e.target.closest(".menu")){
-        document.querySelectorAll(".menu-item").forEach(m=>m.classList.remove("active"));
-    }
-});
+    let files = [];
 
-let files = [];
+    let currentView = "list";
 
-async function fetchFiles(){
-    const res = await fetch("/api/files?path=" + encodeURIComponent(currentPath));
-    files = await res.json();
-    renderFiles();
-}
 
-function renderFiles(){
-    const list = document.getElementById("fileList");
-    list.innerHTML = "";
+    function setStatus(message) {
 
-    files.forEach((f,i)=>{
+        const status =
+            document.getElementById(
+                "fmStatus"
+            );
 
-        const date = new Date(f.date * 1000).toLocaleString();
 
-        list.innerHTML += `
-    <div class="file-item">
-        <div class="file-name">
-            <div>${f.name}</div>
-            <span>${date}</span>
-        </div>
+        if (status) {
 
-        <div class="file-actions">
-            <button onclick="openFile('${f.name}')">Open</button>
-            <button onclick="deleteFile('${f.name}')">Delete</button>
-        </div>
-    </div>
-`;
-    });
-}
+            status.textContent =
+                message;
 
-const DEBUG_LOG = true;
-
-function openFile(name){
-
-    const fullPath = currentPath + "/" + name;
-
-    const encodedPath = fullPath
-        .split("/")
-        .map(part => encodeURIComponent(part))
-        .join("/");
-
-    if(name.includes(".")){
-        window.open(encodedPath, "_blank");
-    }else{
-        changePath(fullPath);
-    }
-}
-
-let currentPath = "/htdocs";
-
-function editPath(){
-    const el = document.getElementById("pathDisplay");
-
-    const input = document.createElement("input");
-    input.type = "text";
-    input.value = currentPath;
-    input.style.width = "100%";
-    input.style.padding = "4px";
-    input.style.borderRadius = "4px";
-    input.style.border = "1px solid #333";
-    input.style.background = "#111";
-    input.style.color = "#fff";
-
-    el.innerHTML = "";
-    el.appendChild(input);
-    input.focus();
-
-    input.addEventListener("keydown", function(e){
-        if(e.key === "Enter"){
-            changePath(input.value);
-        }
-    });
-
-    input.addEventListener("blur", function(){
-        el.innerText = currentPath;
-    });
-}
-
-function changePath(path){
-    if(!path.startsWith("/")){
-        path = "/" + path;
-    }
-
-    currentPath = path;
-
-    document.getElementById("pathDisplay").innerText = currentPath;
-
-    fetch("/api/files?path=" + encodeURIComponent(currentPath))
-        .then(res => res.json())
-        .then(data => {
-            files = data;
-            renderFiles();
-        })
-        .catch(() => {
-            serverLog("Erro ao acessar: " + currentPath);
-        });
-}
-
-async function deleteFile(name){
-
-    if(!confirm("Deletar arquivo?")) return;
-
-    try{
-        let fullPath = currentPath.replace("/htdocs/", "");
-
-        if(fullPath === "/htdocs"){
-            fullPath = "";
         }
 
-        if(fullPath && !fullPath.endsWith("/")){
-            fullPath += "/";
+    }
+
+
+    function serverLog(message) {
+
+        const body =
+            document.getElementById(
+                "fmServerLogBody"
+            );
+
+
+        const time =
+            new Date().toLocaleTimeString();
+
+
+        if (body) {
+
+            body.insertAdjacentHTML(
+                "beforeend",
+
+                `[${time}] ${message}<br>`
+            );
+
+
+            body.scrollTop =
+                body.scrollHeight;
+
         }
 
-        fullPath += name;
 
-        const res = await fetch(
-            "/delete/" + encodeURIComponent(fullPath)
+        if (
+            typeof window.log ===
+            "function"
+        ) {
+
+            window.log(
+                "File Manager: " +
+                message
+            );
+
+        }
+
+    }
+
+
+    async function fetchFiles() {
+
+        setStatus(
+            "Loading " +
+            currentPath +
+            "..."
         );
 
-        if(!res.ok){
 
-            alert("Erro ao deletar arquivo");
+        try {
 
-            console.error("Erro:", res.status);
+            const response =
+                await fetch(
+                    "/api/files?path=" +
+                    encodeURIComponent(
+                        currentPath
+                    )
+                );
 
-            return;
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "HTTP " +
+                    response.status
+                );
+
+            }
+
+
+            files =
+                await response.json();
+
+
+            renderFiles();
+
+
+            setStatus(
+                files.length +
+                " item(s)"
+            );
+
+
+            serverLog(
+                "Directory opened: " +
+                currentPath
+            );
+
+
+        } catch (error) {
+
+            console.error(error);
+
+
+            const list =
+                document.getElementById(
+                    "fmFileList"
+                );
+
+
+            if (list) {
+
+                list.innerHTML = `
+
+                    <div class="fm-empty">
+
+                        Unable to access:
+                        ${escapeHtml(
+                            currentPath
+                        )}
+
+                    </div>
+
+                `;
+
+            }
+
+
+            setStatus(
+                "Error loading directory"
+            );
+
+
+            serverLog(
+                "ERROR: " +
+                error.message
+            );
+
         }
 
-        serverLog("Arquivo deletado: " + name);
+    }
+
+
+    function escapeHtml(value) {
+
+        return String(value)
+            .replace(
+                /&/g,
+                "&amp;"
+            )
+            .replace(
+                /</g,
+                "&lt;"
+            )
+            .replace(
+                />/g,
+                "&gt;"
+            )
+            .replace(
+                /"/g,
+                "&quot;"
+            )
+            .replace(
+                /'/g,
+                "&#039;"
+            );
+
+    }
+
+
+    function renderFiles() {
+
+        const list =
+            document.getElementById(
+                "fmFileList"
+            );
+
+
+        if (!list) {
+
+            return;
+
+        }
+
+
+        list.classList.toggle(
+            "fm-grid-mode",
+            currentView === "grid"
+        );
+
+
+        list.innerHTML = `
+
+            <div class="fm-list-header">
+
+                <div>
+                    Name
+                </div>
+
+                <div>
+                    Date
+                </div>
+
+                <div>
+                    Actions
+                </div>
+
+            </div>
+
+        `;
+
+
+        if (!files.length) {
+
+            list.insertAdjacentHTML(
+                "beforeend",
+
+                `
+                <div class="fm-empty">
+                    This directory is empty.
+                </div>
+                `
+            );
+
+            return;
+
+        }
+
+
+        files.forEach(
+            (file, index) => {
+
+                const date =
+                    file.date
+                        ? new Date(
+                            file.date * 1000
+                        ).toLocaleString()
+                        : "";
+
+
+                const name =
+                    escapeHtml(
+                        file.name
+                    );
+
+
+                const isFolder =
+                    !file.name.includes(".");
+
+
+                const icon =
+                    isFolder
+                        ? "📁"
+                        : "📄";
+
+
+                const item =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                item.className =
+                    "fm-file-item";
+
+
+                item.innerHTML = `
+
+                    <div class="fm-file-name">
+
+                        <div class="fm-file-icon">
+                            ${icon}
+                        </div>
+
+                        <div class="fm-file-text">
+
+                            <div
+                                class="fm-file-title"
+                                data-index="${index}">
+                                ${name}
+                            </div>
+
+                            <div class="fm-file-date">
+                                ${escapeHtml(date)}
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="fm-file-date">
+                        ${escapeHtml(date)}
+                    </div>
+
+
+                    <div class="fm-file-actions">
+
+                        <button
+                            class="fm-action"
+                            data-open="${index}">
+                            Open
+                        </button>
+
+                        <button
+                            class="fm-action delete"
+                            data-delete="${index}">
+                            Delete
+                        </button>
+
+                    </div>
+
+                `;
+
+
+                list.appendChild(
+                    item
+                );
+
+            }
+        );
+
+
+        list
+            .querySelectorAll(
+                "[data-index]"
+            )
+            .forEach(element => {
+
+                element.addEventListener(
+                    "click",
+                    () => {
+
+                        const index =
+                            Number(
+                                element.dataset.index
+                            );
+
+
+                        openFile(
+                            files[index].name
+                        );
+
+                    }
+                );
+
+            });
+
+
+        list
+            .querySelectorAll(
+                "[data-open]"
+            )
+            .forEach(button => {
+
+                button.addEventListener(
+                    "click",
+                    () => {
+
+                        const index =
+                            Number(
+                                button.dataset.open
+                            );
+
+
+                        openFile(
+                            files[index].name
+                        );
+
+                    }
+                );
+
+            });
+
+
+        list
+            .querySelectorAll(
+                "[data-delete]"
+            )
+            .forEach(button => {
+
+                button.addEventListener(
+                    "click",
+                    () => {
+
+                        const index =
+                            Number(
+                                button.dataset.delete
+                            );
+
+
+                        deleteFile(
+                            files[index].name
+                        );
+
+                    }
+                );
+
+            });
+
+    }
+
+
+    function openFile(name) {
+
+        const fullPath =
+            currentPath +
+            "/" +
+            name;
+
+
+        if (!name.includes(".")) {
+
+            changePath(
+                fullPath
+            );
+
+            return;
+
+        }
+
+
+        const encodedPath =
+            fullPath
+                .split("/")
+                .map(
+                    part =>
+                        encodeURIComponent(
+                            part
+                        )
+                )
+                .join("/");
+
+
+        window.location.href =
+            encodedPath;
+
+    }
+
+
+    function editPath() {
+
+        const element =
+            document.getElementById(
+                "fmPath"
+            );
+
+
+        if (!element) {
+
+            return;
+
+        }
+
+
+        const input =
+            document.createElement(
+                "input"
+            );
+
+
+        input.className =
+            "fm-path-input";
+
+
+        input.value =
+            currentPath;
+
+
+        element.innerHTML = "";
+
+
+        element.appendChild(
+            input
+        );
+
+
+        input.focus();
+
+        input.select();
+
+
+        input.addEventListener(
+            "keydown",
+            event => {
+
+                if (
+                    event.key ===
+                    "Enter"
+                ) {
+
+                    changePath(
+                        input.value
+                    );
+
+                }
+
+                if (
+                    event.key ===
+                    "Escape"
+                ) {
+
+                    updatePathDisplay();
+
+                }
+
+            }
+        );
+
+
+        input.addEventListener(
+            "blur",
+            () => {
+
+                updatePathDisplay();
+
+            }
+        );
+
+    }
+
+
+    function updatePathDisplay() {
+
+        const path =
+            document.getElementById(
+                "fmPath"
+            );
+
+
+        const headerPath =
+            document.getElementById(
+                "fmHeaderPath"
+            );
+
+
+        if (path) {
+
+            path.textContent =
+                currentPath;
+
+        }
+
+
+        if (headerPath) {
+
+            headerPath.textContent =
+                currentPath;
+
+        }
+
+    }
+
+
+    function changePath(path) {
+
+        path =
+            String(path || "").trim();
+
+
+        if (!path) {
+
+            path =
+                "/htdocs";
+
+        }
+
+
+        if (
+            !path.startsWith("/")
+        ) {
+
+            path =
+                "/" + path;
+
+        }
+
+
+        currentPath =
+            path;
+
+
+        updatePathDisplay();
 
         fetchFiles();
 
-    }catch(e){
-
-        console.error(e);
-
-        alert("Falha na conexão");
-
-        serverLog("Erro ao deletar: " + name);
     }
-}
 
-function upload(){
 
-    let input = document.createElement("input");
-    input.type = "file";
+    async function deleteFile(name) {
 
-    input.onchange = async () => {
+        if (
+            !confirm(
+                "Deletar arquivo?"
+            )
+        ) {
 
-        let file = input.files[0];
-        if(!file) return;
+            return;
 
-        let formData = new FormData();
+        }
 
-        formData.append("file", file);
 
-        /* CAMINHO ATUAL */
-        formData.append("path", currentPath);
+        try {
 
-        await fetch("/upload", {
-            method: "POST",
-            body: formData
-        });
+            let fullPath =
+                currentPath;
+
+
+            if (
+                fullPath ===
+                "/htdocs"
+            ) {
+
+                fullPath = "";
+
+            } else {
+
+                fullPath =
+                    fullPath.replace(
+                        /^\/htdocs\/?/,
+                        ""
+                    );
+
+            }
+
+
+            if (
+                fullPath &&
+                !fullPath.endsWith("/")
+            ) {
+
+                fullPath += "/";
+
+            }
+
+
+            fullPath += name;
+
+
+            const response =
+                await fetch(
+                    "/delete/" +
+                    encodeURIComponent(
+                        fullPath
+                    )
+                );
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "HTTP " +
+                    response.status
+                );
+
+            }
+
+
+            serverLog(
+                "File deleted: " +
+                name
+            );
+
+
+            setStatus(
+                "File deleted"
+            );
+
+
+            fetchFiles();
+
+
+        } catch (error) {
+
+            console.error(error);
+
+
+            setStatus(
+                "Delete error"
+            );
+
+
+            serverLog(
+                "ERROR deleting: " +
+                name
+            );
+
+        }
+
+    }
+
+
+    function upload() {
+
+        const input =
+            document.createElement(
+                "input"
+            );
+
+
+        input.type =
+            "file";
+
+
+        input.onchange =
+            async function () {
+
+                const file =
+                    input.files[0];
+
+
+                if (!file) {
+
+                    return;
+
+                }
+
+
+                const formData =
+                    new FormData();
+
+
+                formData.append(
+                    "file",
+                    file
+                );
+
+
+                formData.append(
+                    "path",
+                    currentPath
+                );
+
+
+                try {
+
+                    setStatus(
+                        "Uploading " +
+                        file.name +
+                        "..."
+                    );
+
+
+                    const response =
+                        await fetch(
+                            "/upload",
+                            {
+                                method:
+                                    "POST",
+                                body:
+                                    formData
+                            }
+                        );
+
+
+                    if (!response.ok) {
+
+                        throw new Error(
+                            "HTTP " +
+                            response.status
+                        );
+
+                    }
+
+
+                    serverLog(
+                        "Uploaded: " +
+                        file.name
+                    );
+
+
+                    fetchFiles();
+
+
+                } catch (error) {
+
+                    console.error(
+                        error
+                    );
+
+
+                    setStatus(
+                        "Upload error"
+                    );
+
+
+                    serverLog(
+                        "ERROR uploading: " +
+                        file.name
+                    );
+
+                }
+
+            };
+
+
+        input.click();
+
+    }
+
+
+    async function newFolder() {
+
+        const name =
+            prompt(
+                "Folder name:"
+            );
+
+
+        if (!name) {
+
+            return;
+
+        }
+
+
+        try {
+
+            const response =
+                await fetch(
+                    "/create_folder/" +
+                    encodeURIComponent(
+                        name
+                    )
+                );
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "HTTP " +
+                    response.status
+                );
+
+            }
+
+
+            serverLog(
+                "Folder created: " +
+                name
+            );
+
+
+            fetchFiles();
+
+
+        } catch (error) {
+
+            console.error(error);
+
+
+            setStatus(
+                "Folder creation error"
+            );
+
+
+            serverLog(
+                "ERROR creating folder: " +
+                name
+            );
+
+        }
+
+    }
+
+
+    function setView(mode) {
+
+        if (
+            mode !== "list" &&
+            mode !== "grid"
+        ) {
+
+            return;
+
+        }
+
+
+        currentView =
+            mode;
+
+
+        renderFiles();
+
+
+        serverLog(
+            "View changed to: " +
+            mode
+        );
+
+    }
+
+
+    function refresh() {
 
         fetchFiles();
-    };
 
-    input.click();
-}
-
-async function newFolder(){
-    let name = prompt("Folder name:");
-    if(name){
-        await fetch("/create_folder/" + name);
-        fetchFiles();
-    }
-}
-
-function log(msg){
-    if(DEBUG_LOG) console.log(msg);
-    serverLog("USER: " + msg);
-}
-
-function serverLog(msg){
-    const box = document.getElementById("serverLogBody");
-    if(!box) return;
-    const time = new Date().toLocaleTimeString();
-    box.innerHTML += `[${time}] ${msg}<br>`;
-    box.scrollTop = box.scrollHeight;
-}
-
-function toggleServerLog(){
-    document.getElementById("serverLog").classList.add("active");
-}
-
-function closeServerLog(){
-    document.getElementById("serverLog").classList.remove("active");
-}
-
-function logout(){
-    window.location.href = "/logout";
-}
-
-function setView(mode){
-    const list = document.getElementById("fileList");
-
-    if(mode === "grid"){
-        list.style.display = "grid";
-        list.style.gridTemplateColumns = "repeat(auto-fill, minmax(160px, 1fr))";
-        list.style.gap = "12px";
-
-        list.classList.add("grid-mode");
-    } else {
-        list.style.display = "block";
-        list.classList.remove("grid-mode");
-    }
-}
-
-fetchFiles();
-
-// Browser Info
-function getBrowserInfo() {
-
-    const ua = navigator.userAgent;
-
-    let browser = "Unknown";
-
-    if (ua.includes("Firefox")) {
-        browser = "Mozilla Firefox";
-    } 
-    else if (ua.includes("SamsungBrowser")) {
-        browser = "Samsung Internet";
-    } 
-    else if (ua.includes("Opera") || ua.includes("OPR")) {
-        browser = "Opera";
-    } 
-    else if (ua.includes("Edg")) {
-        browser = "Microsoft Edge";
-    } 
-    else if (ua.includes("Chrome")) {
-        browser = "Google Chrome";
-    } 
-    else if (ua.includes("Safari")) {
-        browser = "Safari";
     }
 
-    const browserInfo = document.getElementById("browserInfo");
 
-    if(browserInfo){
-        browserInfo.innerHTML = `Browser: ${browser}`;
+    function toggleServerLog() {
+
+        const box =
+            document.getElementById(
+                "fmServerLog"
+            );
+
+
+        if (box) {
+
+            box.classList.add(
+                "active"
+            );
+
+        }
+
     }
-}
 
-/* EXECUTA */
-document.addEventListener("DOMContentLoaded", () => {
-    getBrowserInfo();
-});
 
-/* ABOUT */
-function openAbout(){
-    document.getElementById("aboutBox").style.display = "block";
-    log("Opened About Box");
-}
+    function closeServerLog() {
 
-function closeAbout(){
-    const box = document.getElementById("aboutBox");
-    if(!box) return;
+        const box =
+            document.getElementById(
+                "fmServerLog"
+            );
 
-    box.style.display = "none";
-    box.classList.remove("active");
-}
+
+        if (box) {
+
+            box.classList.remove(
+                "active"
+            );
+
+        }
+
+    }
+
+
+    FM.upload =
+        upload;
+
+    FM.newFolder =
+        newFolder;
+
+    FM.setView =
+        setView;
+
+    FM.refresh =
+        refresh;
+
+    FM.editPath =
+        editPath;
+
+    FM.toggleServerLog =
+        toggleServerLog;
+
+    FM.closeServerLog =
+        closeServerLog;
+
+
+    window.FM =
+        FM;
+
+
+    fetchFiles();
+
+})();
+
 </script>
 
 </body>

@@ -11,12 +11,7 @@
 
     <title>PyPanel Flask</title>
 
-
     <style>
-
-        /* =========================================================
-           RESET
-        ========================================================= */
 
         * {
             box-sizing: border-box;
@@ -27,7 +22,6 @@
             width: 100%;
             height: 100%;
             margin: 0;
-
             overflow: hidden;
 
             font-family: "Segoe UI", Tahoma, Arial, sans-serif;
@@ -41,11 +35,6 @@
             transition: 0.2s;
         }
 
-
-        /* =========================================================
-           WINDOW
-        ========================================================= */
-
         .window {
             width: 100%;
             height: 100vh;
@@ -53,11 +42,6 @@
             display: flex;
             flex-direction: column;
         }
-
-
-        /* =========================================================
-           TITLE BAR
-        ========================================================= */
 
         .titlebar {
             height: 32px;
@@ -109,11 +93,6 @@
         .window-button.close:hover {
             background: #e81123;
         }
-
-
-        /* =========================================================
-           MENU
-        ========================================================= */
 
         .menu {
             height: 28px;
@@ -179,11 +158,6 @@
             color: #fff;
         }
 
-
-        /* =========================================================
-           TOOLBAR
-        ========================================================= */
-
         .toolbar {
             height: 38px;
             min-height: 38px;
@@ -214,7 +188,6 @@
 
         .tool-button:hover {
             background: #e8f1fb;
-
             border-color: #0078d7;
         }
 
@@ -235,22 +208,12 @@
             border-color: #0078d7;
         }
 
-
-        /* =========================================================
-           MAIN
-        ========================================================= */
-
         .main {
             flex: 1;
             min-height: 0;
 
             display: flex;
         }
-
-
-        /* =========================================================
-           PROJECT SIDEBAR
-        ========================================================= */
 
         .sidebar {
             width: 280px;
@@ -307,11 +270,6 @@
             border-color: #99cfff;
         }
 
-
-        /* =========================================================
-           CONTENT
-        ========================================================= */
-
         .content {
             flex: 1;
             min-width: 0;
@@ -321,11 +279,6 @@
 
             background: #fff;
         }
-
-
-        /* =========================================================
-           DASHBOARD HEADER
-        ========================================================= */
 
         .dashboard-header {
             height: 52px;
@@ -356,13 +309,9 @@
             color: #777;
         }
 
-
-        /* =========================================================
-           TABS
-        ========================================================= */
-
         .tabs {
             height: 35px;
+            min-height: 35px;
 
             display: flex;
 
@@ -390,11 +339,6 @@
 
             border-top: 2px solid #0078d7;
         }
-
-
-        /* =========================================================
-           DASHBOARD AREA
-        ========================================================= */
 
         .dashboard {
             flex: 1;
@@ -426,11 +370,6 @@
         .section-body {
             padding: 12px;
         }
-
-
-        /* =========================================================
-           LOG TAB
-        ========================================================= */
 
         .log-panel {
             height: 100%;
@@ -511,14 +450,8 @@
 
         .log-user {
             color: #005cc5;
-
             font-weight: bold;
         }
-
-
-        /* =========================================================
-           MODULE GRID
-        ========================================================= */
 
         .module-grid {
             display: grid;
@@ -578,11 +511,6 @@
             font-size: 12px;
         }
 
-
-        /* =========================================================
-           USER INFORMATION
-        ========================================================= */
-
         .user-info {
             display: grid;
 
@@ -613,10 +541,25 @@
             font-weight: bold;
         }
 
+        .external-module-host {
+            display: none;
 
-        /* =========================================================
-           ABOUT
-        ========================================================= */
+            flex: 1;
+            min-height: 0;
+
+            overflow: hidden;
+
+            background: #fff;
+        }
+
+        .external-module-host.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .external-module-host > style {
+            display: none;
+        }
 
         .about-box {
             position: fixed;
@@ -674,7 +617,6 @@
 
         .about-body {
             padding: 20px;
-
             line-height: 1.5;
         }
 
@@ -696,11 +638,6 @@
             cursor: pointer;
         }
 
-
-        /* =========================================================
-           STATUS BAR
-        ========================================================= */
-
         .statusbar {
             height: 24px;
             min-height: 24px;
@@ -721,11 +658,6 @@
             margin-left: auto;
         }
 
-
-        /* =========================================================
-           RESPONSIVE
-        ========================================================= */
-
         @media (max-width: 700px) {
 
             .sidebar {
@@ -745,7 +677,6 @@
             }
 
         }
-
 
         @media (max-width: 500px) {
 
@@ -782,10 +713,6 @@
 <div class="window">
 
 
-    <!-- =========================================================
-         TITLE BAR
-    ========================================================= -->
-
     <div class="titlebar">
 
         <div class="title-icon">
@@ -815,10 +742,6 @@
     </div>
 
 
-    <!-- =========================================================
-         MENU
-    ========================================================= -->
-
     <div class="menu">
 
         <div
@@ -831,7 +754,7 @@
 
                 <div
                     class="submenu-item"
-                    onclick="location.reload()">
+                    onclick="returnToDashboard()">
                     Dashboard
                 </div>
 
@@ -886,22 +809,12 @@
     </div>
 
 
-    <!-- =========================================================
-         TOOLBAR
-    ========================================================= -->
-
     <div class="toolbar">
 
         <button
             class="tool-button"
-            onclick="location.reload()">
-            ↻ Refresh
-        </button>
-
-        <button
-            class="tool-button"
-            onclick="openAbout()">
-            ℹ About
+            onclick="returnToDashboard()">
+            Dashboard
         </button>
 
         <input
@@ -914,16 +827,8 @@
     </div>
 
 
-    <!-- =========================================================
-         MAIN
-    ========================================================= -->
-
     <div class="main">
 
-
-        <!-- =====================================================
-             SIDEBAR
-        ===================================================== -->
 
         <aside class="sidebar">
 
@@ -939,7 +844,7 @@
 
 
                 <div
-                    class="tree-module active"
+                    class="tree-module"
                     data-module="Files"
                     onclick="openModule(
                         '/filemanager',
@@ -947,7 +852,9 @@
                         'File Manager',
                         '📁'
                     )">
+
                     📁 Files
+
                 </div>
 
 
@@ -955,7 +862,9 @@
                     class="tree-module"
                     data-module="Domains"
                     onclick="log('Domains accessed')">
+
                     🌐 Domains
+
                 </div>
 
 
@@ -968,7 +877,9 @@
                         'Database Manager',
                         '🗄️'
                     )">
+
                     🗄️ Database
+
                 </div>
 
 
@@ -976,7 +887,9 @@
                     class="tree-module"
                     data-module="Emails"
                     onclick="log('Emails accessed')">
+
                     📧 Emails
+
                 </div>
 
 
@@ -984,7 +897,9 @@
                     class="tree-module"
                     data-module="Security"
                     onclick="log('Security accessed')">
+
                     🔒 Security
+
                 </div>
 
 
@@ -997,7 +912,9 @@
                         'Backup Manager',
                         '💾'
                     )">
+
                     💾 Backups
+
                 </div>
 
 
@@ -1005,7 +922,9 @@
                     class="tree-module"
                     data-module="Monitoring"
                     onclick="log('Monitoring accessed')">
+
                     📊 Monitoring
+
                 </div>
 
             </div>
@@ -1013,16 +932,8 @@
         </aside>
 
 
-        <!-- =====================================================
-             CONTENT
-        ===================================================== -->
-
         <main class="content">
 
-
-            <!-- =================================================
-                 HEADER
-            ================================================= -->
 
             <div class="dashboard-header">
 
@@ -1047,11 +958,9 @@
             </div>
 
 
-            <!-- =================================================
-                 TABS
-            ================================================= -->
-
-            <div class="tabs">
+            <div
+                class="tabs"
+                id="dashboardTabs">
 
                 <div
                     class="tab active"
@@ -1080,16 +989,10 @@
             </div>
 
 
-            <!-- =================================================
-                 DASHBOARD
-            ================================================= -->
+            <div
+                class="dashboard"
+                id="dashboardArea">
 
-            <div class="dashboard">
-
-
-                <!-- =================================================
-                     OVERVIEW
-                ================================================= -->
 
                 <div
                     class="tab-content"
@@ -1176,10 +1079,14 @@
                             <div class="module-grid">
 
 
-                                <a
-                                    href="/filemanager"
+                                <div
                                     class="module"
-                                    onclick="log('Files accessed')">
+                                    onclick="openModule(
+                                        '/filemanager',
+                                        'Files',
+                                        'File Manager',
+                                        '📁'
+                                    )">
 
                                     <div class="module-icon">
                                         📁
@@ -1197,7 +1104,7 @@
 
                                     </div>
 
-                                </a>
+                                </div>
 
 
                                 <div
@@ -1223,10 +1130,14 @@
                                 </div>
 
 
-                                <a
-                                    href="/database"
+                                <div
                                     class="module"
-                                    onclick="log('Database open')">
+                                    onclick="openModule(
+                                        '/database',
+                                        'Database',
+                                        'Database Manager',
+                                        '🗄️'
+                                    )">
 
                                     <div class="module-icon">
                                         🗄️
@@ -1244,7 +1155,7 @@
 
                                     </div>
 
-                                </a>
+                                </div>
 
 
                                 <div
@@ -1293,10 +1204,14 @@
                                 </div>
 
 
-                                <a
-                                    href="/backup"
+                                <div
                                     class="module"
-                                    onclick="log('Backup accessed')">
+                                    onclick="openModule(
+                                        '/backup',
+                                        'Backups',
+                                        'Backup Manager',
+                                        '💾'
+                                    )">
 
                                     <div class="module-icon">
                                         💾
@@ -1314,7 +1229,7 @@
 
                                     </div>
 
-                                </a>
+                                </div>
 
 
                                 <div
@@ -1350,8 +1265,12 @@
 
                                     <div class="module-info">
 
-                                        <div class="module-description">
+                                        <div class="module-name">
                                             Server Activity
+                                        </div>
+
+                                        <div class="module-description">
+                                            Server Log
                                         </div>
 
                                     </div>
@@ -1368,10 +1287,6 @@
                 </div>
 
 
-                <!-- =================================================
-                     MODULES
-                ================================================= -->
-
                 <div
                     class="tab-content"
                     id="modules"
@@ -1387,8 +1302,17 @@
 
                             <div class="module-grid">
 
-                                <div class="module">
+                                <div
+                                    class="module"
+                                    onclick="openModule(
+                                        '/filemanager',
+                                        'Files',
+                                        'File Manager',
+                                        '📁'
+                                    )">
+
                                     📁 File Manager
+
                                 </div>
 
                                 <div class="module">
@@ -1423,10 +1347,6 @@
 
                 </div>
 
-
-                <!-- =================================================
-                     SYSTEM
-                ================================================= -->
 
                 <div
                     class="tab-content"
@@ -1492,10 +1412,6 @@
                 </div>
 
 
-                <!-- =================================================
-                     LOG
-                ================================================= -->
-
                 <div
                     class="tab-content"
                     id="log"
@@ -1537,6 +1453,12 @@
                 </div>
 
 
+                <div
+                    class="external-module-host"
+                    id="externalModuleHost">
+                </div>
+
+
             </div>
 
         </main>
@@ -1544,13 +1466,9 @@
     </div>
 
 
-    <!-- =========================================================
-         STATUS BAR
-    ========================================================= -->
-
     <div class="statusbar">
 
-        <span>
+        <span id="statusText">
             Ready
         </span>
 
@@ -1562,9 +1480,6 @@
 
 </div>
 
-<!-- =============================================================
-     ABOUT
-============================================================= -->
 
 <div
     class="about-box"
@@ -1572,7 +1487,6 @@
 
     <div class="about-window">
 
-        <!-- About Header -->
         <div class="about-header">
 
             <span>
@@ -1587,7 +1501,6 @@
         </div>
 
 
-        <!-- About Content -->
         <div class="about-body">
 
             <div class="about-title">
@@ -1651,7 +1564,6 @@
         </div>
 
 
-        <!-- About Footer -->
         <div class="about-footer">
 
             <button
@@ -1666,25 +1578,29 @@
 </div>
 
 
-<!-- =============================================================
-     JAVASCRIPT
-============================================================= -->
-
 <script>
 
 let DEBUG_LOG = true;
+
 
 /* =========================================================
    FULLSCREEN
 ========================================================= */
 
 function toggleFullscreen() {
+
     if (!document.fullscreenElement) {
+
         document.documentElement.requestFullscreen();
+
     } else {
+
         document.exitFullscreen();
+
     }
+
 }
+
 
 /* =========================================================
    MENU
@@ -1695,6 +1611,7 @@ function toggleMenu(element) {
     const isOpen =
         element.classList.contains("active");
 
+
     document
         .querySelectorAll(".menu-item")
         .forEach(item => {
@@ -1702,6 +1619,7 @@ function toggleMenu(element) {
             item.classList.remove("active");
 
         });
+
 
     if (!isOpen) {
 
@@ -1780,8 +1698,11 @@ document.addEventListener("DOMContentLoaded", () => {
 function log(message) {
 
     if (DEBUG_LOG) {
+
         console.log(message);
+
     }
+
 
     serverLog(
         "USER: " + message
@@ -1795,6 +1716,7 @@ function serverLog(message) {
     const time =
         new Date().toLocaleTimeString();
 
+
     const entry =
         `<div class="log-entry">
             <span class="log-time">[${time}]</span>
@@ -1804,9 +1726,6 @@ function serverLog(message) {
 
     const tabLog =
         document.getElementById("tabLogBody");
-
-    const popupLog =
-        document.getElementById("serverLogBody");
 
 
     if (tabLog) {
@@ -1821,19 +1740,6 @@ function serverLog(message) {
 
     }
 
-
-    if (popupLog) {
-
-        popupLog.insertAdjacentHTML(
-            "beforeend",
-            entry
-        );
-
-        popupLog.scrollTop =
-            popupLog.scrollHeight;
-
-    }
-
 }
 
 
@@ -1842,16 +1748,11 @@ function clearLog() {
     const tabLog =
         document.getElementById("tabLogBody");
 
-    const popupLog =
-        document.getElementById("serverLogBody");
-
 
     if (tabLog) {
-        tabLog.innerHTML = "";
-    }
 
-    if (popupLog) {
-        popupLog.innerHTML = "";
+        tabLog.innerHTML = "";
+
     }
 
 }
@@ -1879,10 +1780,344 @@ function logout() {
 
 
 /* =========================================================
+   RETURN DASHBOARD
+========================================================= */
+
+function returnToDashboard() {
+
+    const host =
+        document.getElementById(
+            "externalModuleHost"
+        );
+
+
+    const tabs =
+        document.getElementById(
+            "dashboardTabs"
+        );
+
+
+    const dashboard =
+        document.querySelector(
+            ".dashboard"
+        );
+
+
+    if (host) {
+
+        host.classList.remove("active");
+
+        host.innerHTML = "";
+
+    }
+
+
+    if (tabs) {
+
+        tabs.style.display = "flex";
+
+    }
+
+
+    document
+        .querySelectorAll(".tab-content")
+        .forEach(content => {
+
+            content.style.display = "none";
+
+        });
+
+
+    const overview =
+        document.getElementById(
+            "overview"
+        );
+
+
+    if (overview) {
+
+        overview.style.display =
+            "block";
+
+    }
+
+
+    document
+        .querySelectorAll(".tab")
+        .forEach(tab => {
+
+            tab.classList.remove("active");
+
+        });
+
+
+    const firstTab =
+        document.querySelector(
+            ".tab"
+        );
+
+
+    if (firstTab) {
+
+        firstTab.classList.add("active");
+
+    }
+
+
+    document
+        .querySelectorAll(".tree-module")
+        .forEach(module => {
+
+            module.classList.remove(
+                "active"
+            );
+
+        });
+
+
+    document.getElementById(
+        "dashboardName"
+    ).textContent =
+        "Dashboard";
+
+
+    document.getElementById(
+        "dashboardType"
+    ).textContent =
+        "PyPanel Flask";
+
+
+    document.getElementById(
+        "dashboardIcon"
+    ).textContent =
+        "🖥️";
+
+
+    document.getElementById(
+        "statusText"
+    ).textContent =
+        "Ready";
+
+
+    log(
+        "Dashboard accessed"
+    );
+
+}
+
+
+/* =========================================================
+   EXTERNAL MODULE
+========================================================= */
+
+async function loadExternalModule(url, moduleName = "Module") {
+
+    const host =
+        document.getElementById(
+            "externalModuleHost"
+        );
+
+
+    if (!host) {
+
+        return;
+
+    }
+
+
+    host.classList.add("active");
+
+    host.innerHTML = "";
+
+
+    try {
+
+        const response =
+            await fetch(url, {
+                method: "GET",
+                headers: {
+                    "X-Requested-With":
+                        "XMLHttpRequest"
+                }
+            });
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "HTTP " + response.status
+            );
+
+        }
+
+
+        const html =
+            await response.text();
+
+
+        const parser =
+            new DOMParser();
+
+
+        const documentData =
+            parser.parseFromString(
+                html,
+                "text/html"
+            );
+
+
+        const styles =
+            documentData.querySelectorAll(
+                "style"
+            );
+
+
+        styles.forEach(style => {
+
+            const newStyle =
+                document.createElement(
+                    "style"
+                );
+
+            newStyle.textContent =
+                style.textContent;
+
+            host.appendChild(
+                newStyle
+            );
+
+        });
+
+
+        const body =
+            documentData.body;
+
+
+        Array
+            .from(body.children)
+            .forEach(element => {
+
+                if (
+                    element.tagName.toLowerCase() !==
+                    "script"
+                ) {
+
+                    host.appendChild(
+                        element
+                    );
+
+                }
+
+            });
+
+
+        const scripts =
+            documentData.querySelectorAll(
+                "script"
+            );
+
+
+        for (
+            const originalScript of scripts
+        ) {
+
+            if (
+                originalScript.src
+            ) {
+
+                const script =
+                    document.createElement(
+                        "script"
+                    );
+
+                script.src =
+                    originalScript.src;
+
+                script.async = false;
+
+                host.appendChild(
+                    script
+                );
+
+            } else {
+
+                const script =
+                    document.createElement(
+                        "script"
+                    );
+
+                script.textContent =
+                    originalScript.textContent;
+
+                host.appendChild(
+                    script
+                );
+
+            }
+
+        }
+
+
+        const statusText = document.getElementById("statusText");
+        if (statusText) {
+            statusText.textContent = moduleName + " loaded";
+        }
+
+
+    } catch (error) {
+
+        console.error(error);
+
+
+        host.innerHTML = `
+
+            <div style="
+                padding:20px;
+                font-family:Segoe UI,Tahoma,Arial,sans-serif;
+            ">
+
+                <div style="
+                    border:1px solid #d0d0d0;
+                    background:#fff;
+                ">
+
+                    <div style="
+                        padding:8px 11px;
+                        background:#eeeeee;
+                        border-bottom:1px solid #d0d0d0;
+                        font-weight:600;
+                    ">
+                        Module Error
+                    </div>
+
+                    <div style="
+                        padding:15px;
+                        color:#b00020;
+                    ">
+                        Unable to load File Manager.
+                    </div>
+
+                </div>
+
+            </div>
+
+        `;
+
+
+        log(
+            "ERROR: Unable to load " + moduleName
+        );
+
+    }
+
+}
+
+
+/* =========================================================
    MODULE
 ========================================================= */
 
-function openModule(
+async function openModule(
     url,
     name,
     type,
@@ -1938,6 +2173,49 @@ function openModule(
         icon;
 
 
+    if (
+        url === "/filemanager" ||
+        url === "/database" ||
+        url === "/backup"
+    ) {
+
+        document
+            .querySelectorAll(
+                ".tab-content"
+            )
+            .forEach(content => {
+
+                content.style.display =
+                    "none";
+
+            });
+
+
+        const tabs =
+            document.getElementById(
+                "dashboardTabs"
+            );
+
+
+        if (tabs) {
+
+            tabs.style.display =
+                "none";
+
+        }
+
+
+        await loadExternalModule(
+            url,
+            type || name
+        );
+
+
+        return;
+
+    }
+
+
     if (url) {
 
         window.location.href =
@@ -1956,6 +2234,37 @@ function switchTab(
     element,
     target
 ) {
+
+    const host =
+        document.getElementById(
+            "externalModuleHost"
+        );
+
+
+    if (
+        host &&
+        host.classList.contains("active")
+    ) {
+
+        host.classList.remove("active");
+        host.innerHTML = "";
+
+    }
+
+
+    const tabs =
+        document.getElementById(
+            "dashboardTabs"
+        );
+
+
+    if (tabs) {
+
+        tabs.style.display =
+            "flex";
+
+    }
+
 
     document
         .querySelectorAll(".tab")
@@ -2012,7 +2321,9 @@ function switchTabByName(target) {
 
 
     if (!tab) {
+
         return;
+
     }
 
 
@@ -2119,10 +2430,12 @@ function getBrowserInfo() {
             "browserInfo"
         );
 
+
     const systemBrowser =
         document.getElementById(
             "systemBrowser"
         );
+
 
     const aboutBrowser =
         document.getElementById(
@@ -2169,7 +2482,9 @@ function openAbout() {
 
 
     if (!box) {
+
         return;
+
     }
 
 
@@ -2193,7 +2508,9 @@ function closeAbout() {
 
 
     if (!box) {
+
         return;
+
     }
 
 
