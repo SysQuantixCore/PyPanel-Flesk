@@ -662,6 +662,16 @@
 
     <div class="fm-toolbar">
 
+        <!-- Back Function -->
+        <button
+           class="fm-button"
+           id="fmBackButton"
+           onclick="FM.back()"
+           style="display: none;"
+           title="Voltar à pasta anterior">
+           &lt; Back
+        </button>
+
         <button
             class="fm-button primary"
             onclick="FM.upload()">
@@ -1345,6 +1355,17 @@
 
         }
 
+        <!-- Back Function -->
+        const backButton =
+        document.getElementById("fmBackButton");
+
+        if (backButton) {
+        backButton.style.display =
+        currentPath.replace(/\/+$/, "") === "/htdocs"
+            ? "none"
+            : "";
+        }
+        
     }
 
 
@@ -1381,6 +1402,27 @@
         fetchFiles();
 
     }
+
+    <!-- Back Function -->
+    function back() {
+    if (currentPath === "/htdocs") {
+        return;
+    }
+
+    const parentPath = currentPath
+        .replace(/\/+$/, "")
+        .substring(
+            0,
+            currentPath.replace(/\/+$/, "").lastIndexOf("/")
+        );
+
+    changePath(
+        parentPath.length >= 7
+            ? parentPath
+            : "/htdocs"
+    );
+    }
+
 
 
     async function deleteFile(name) {
@@ -1746,6 +1788,10 @@
 
     FM.editPath =
         editPath;
+
+    <!-- Back Function -->
+    FM.back =
+    back;
 
     FM.toggleServerLog =
         toggleServerLog;
