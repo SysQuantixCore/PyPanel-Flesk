@@ -1474,57 +1474,31 @@
 
             fullPath += name;
 
+            const response = await fetch(
+            "/delete/" + encodeURIComponent(fullPath)
+            );
 
-            const response =
-                await fetch(
-                    "/delete/" +
-                    encodeURIComponent(
-                        fullPath
-                    )
-                );
-
+            const responseText = await response.text();
 
             if (!response.ok) {
-
-                throw new Error(
-                    "HTTP " +
-                    response.status
-                );
-
+            throw new Error(
+            "HTTP " + response.status + ": " + responseText
+            );
             }
 
+            serverLog("Deleted: " + fullPath);
+            setStatus("Deleted successfully");
+            await fetchFiles();
+
+            } catch (error) {
+            console.error("Delete error:", error);
+
+            setStatus("Delete error: " + error.message);
 
             serverLog(
-                "File deleted: " +
-                name
+            "ERROR deleting " + name + ": " + error.message
             );
-
-
-            setStatus(
-                "File deleted"
-            );
-
-
-            fetchFiles();
-
-
-        } catch (error) {
-
-            console.error(error);
-
-
-            setStatus(
-                "Delete error"
-            );
-
-
-            serverLog(
-                "ERROR deleting: " +
-                name
-            );
-
         }
-
     }
 
 
