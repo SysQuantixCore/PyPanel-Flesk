@@ -20,10 +20,85 @@ def serve_file(filename):
 @files_bp.route("/upload", methods=["POST"])
 @login_required
 def upload():
-    file = request.files["file"]
-    if file:
-        file.save(os.path.join(HTDOCS_FOLDER, file.filename))
-    return redirect("/dashboard")
+    file = request.files.get("file")
+    requested_path = request.form.get("path", "/htdocs")
+
+    if not file or not file.filename:
+        return jsonify({
+            "success": False,
+            "error": "Nenhum arquivo foi enviado."
+        }), 400
+
+    from werkzeug.utils import secure_filename
+
+    filename = secure_filename(file.filename)
+
+    if not filename:
+        return jsonify({
+            "success": False,
+            "error": "Nome de arquivo inválido."
+        }), 400
+
+    base_path = os.path.realpath(HTDOCS_FOLDER)
+
+    relative_path = requested_path.replace("\\", "/").strip("/")
+
+    if relative_path == "htdocs":
+        relative_path = ""
+    elif relative_path.startswith("htdocs/"):
+        relative_path = relative_path[len("htdocs/"):]
+
+    destination_dir = os.path.realpath(
+        os.path.join(base_path, relative_path)
+    )
+
+    try:
+        if os.path.commonpath([base_path, destination_dir]) != base_path:
+            return jsonify({
+                "success": False,
+                "error": "Caminho de destino inválido."
+            }), 403
+    except ValueError:
+        return jsonify({
+            "success": False,
+            "error": "Caminho de destino inválido."
+        }), 403
+
+    if not os.path.isdir(destination_dir):
+        return jsonify({
+            "success": False,
+            "error": "A pasta de destino não existe."
+        }), 404
+
+    destination = os.path.join(destination_dir, filename)
+
+    if os.path.islink(destination):
+        return jsonify({
+            "success": False,
+            "error": "O destino não pode ser um link simbólico."
+        }), 403
+
+    try:
+        file.save(destination)
+
+        return jsonify({
+            "success": True,
+            "filename": filename,
+            "path": os.path.relpath(
+                destination, base_path
+            ).replace("\\", "/")
+        }), 201
+
+    except OSError as error:
+        print(
+            f"ERRO UPLOAD: {type(error).__name__}: {error}",
+            flush=True
+        )
+
+        return jsonify({
+            "success": False,
+            "error": "Não foi possível salvar o arquivo no destino."
+        }), 500
 
 
 @files_bp.route("/delete/<path:filename>", methods=["GET", "POST", "DELETE"])
@@ -101,14 +176,39 @@ def api_files():
     return jsonify(files)
 
 
-@files_bp.route("/create_folder/<name>")
+
+@files_bp.route("/create_folder/<path:name>", methods=["GET", "POST"])
 @login_required
 def create_folder(name):
     base_path = os.path.realpath(HTDOCS_FOLDER)
-    path = os.path.realpath(os.path.join(base_path, name))
 
-    if os.path.commonpath([base_path, path]) != base_path:
+    name = name.replace("\\", "/").strip("/")
+
+    if name == "htdocs":
+        return "invalid folder name", 400
+
+    if name.startswith("htdocs/"):
+        name = name[len("htdocs/"):]
+
+    path = os.path.realpath(
+        os.path.join(base_path, name)
+    )
+
+    try:
+        if os.path.commonpath([base_path, path]) != base_path:
+            return "invalid path", 400
+    except ValueError:
         return "invalid path", 400
 
-    os.makedirs(path, exist_ok=True)
-    return "ok"
+    if path == base_path:
+        return "invalid folder name", 400
+
+    try:
+        os.makedirs(path, exist_ok=True)
+        return "ok", 200
+    except OSError as error:
+        print(
+            f"ERRO CREATE FOLDER: {type(error).__name__}: {error}",
+            flush=True
+        )
+        return "Não foi possível criar a pasta.", 500
