@@ -1552,37 +1552,23 @@
                         "..."
                     );
 
+                    const response = await fetch("/upload", {
+                          method: "POST",
+                          body: formData
+                    });
 
-                    const response =
-                        await fetch(
-                            "/upload",
-                            {
-                                method:
-                                    "POST",
-                                body:
-                                    formData
-                            }
-                        );
+                    const result = await response.json();
 
-
-                    if (!response.ok) {
-
-                        throw new Error(
-                            "HTTP " +
-                            response.status
-                        );
-
+                    if (!response.ok || !result.success) {
+                       throw new Error(
+                          result.error || `HTTP ${response.status}`
+                       );
                     }
 
+                serverLog("Uploaded: " + result.filename);
+                setStatus("Upload concluído: " + result.filename);
 
-                    serverLog(
-                        "Uploaded: " +
-                        file.name
-                    );
-
-
-                    fetchFiles();
-
+                await fetchFiles();
 
                 } catch (error) {
 
