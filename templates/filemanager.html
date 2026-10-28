@@ -1597,70 +1597,63 @@
     }
 
 
+    
     async function newFolder() {
+        const name = prompt("Folder name:");
 
-        const name =
-            prompt(
-                "Folder name:"
-            );
-
-
-        if (!name) {
-
+        if (!name || !name.trim()) {
             return;
-
         }
 
+        const folderName = name.trim();
+
+        if (folderName.includes("/") || folderName.includes("\\")) {
+            setStatus("Invalid folder name");
+            return;
+        }
 
         try {
+        const currentDirectory = currentPath
+            .replace(/\/+$/, "")
+            .replace(/^\/htdocs\/?/, "");
 
-            const response =
-                await fetch(
-                    "/create_folder/" +
-                    encodeURIComponent(
-                        name
-                    )
-                );
+        const fullPath = currentDirectory
+            ? currentDirectory + "/" + folderName
+            : folderName;
 
-
-            if (!response.ok) {
-
-                throw new Error(
-                    "HTTP " +
-                    response.status
-                );
-
+        const response = await fetch(
+            "/create_folder/" +
+            fullPath.split("/").map(encodeURIComponent).join("/"),
+            {
+                method: "POST"
             }
+        );
 
+        const responseText = await response.text();
 
-            serverLog(
-                "Folder created: " +
-                name
+        if (!response.ok) {
+            throw new Error(
+                "HTTP " + response.status + ": " + responseText
             );
-
-
-            fetchFiles();
-
-
-        } catch (error) {
-
-            console.error(error);
-
-
-            setStatus(
-                "Folder creation error"
-            );
-
-
-            serverLog(
-                "ERROR creating folder: " +
-                name
-            );
-
         }
 
-    }
+        serverLog("Folder created: " + fullPath);
+        setStatus("Folder created: " + folderName);
 
+        await fetchFiles();
+    } 
+    
+        catch (error) {
+        console.error("Folder creation error:", error);
+
+        setStatus("Folder creation error: " + error.message);
+
+        serverLog(
+            "ERROR creating folder " + folderName + ": " + error.message
+            );
+        }
+    }
+    
 
     function setView(mode) {
 
