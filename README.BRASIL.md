@@ -47,7 +47,3 @@ Obtenha a versão mais recente do PyPanel Flask:
 [![Última versão](https://img.shields.io/github/v/release/SysQuantixCore/PyPanel-Flask?label=Última%20versão)](https://github.com/SysQuantixCore/PyPanel-Flask/releases/latest)
 
 Acesse [GitHub Releases](https://github.com/SysQuantixCore/PyPanel-Flask/releases) para consultar o histórico de versões, atualizações, melhorias e correções de bugs.
-
----
-
-**PyPanel Flask** · Desenvolvido por [SysQuantixCore](https://github.com/SysQuantixCore)
