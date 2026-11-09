@@ -30,6 +30,14 @@ A lightweight administrative panel developed with **Python and Flask**, featurin
 
 PyPanel Flask is designed to provide a simple and flexible foundation for developing web-based administrative panels, allowing developers to organize routes, manage templates, and extend application functionality through modular components.
 
+## 🚀 Releases
+
+Download the latest version of PyPanel Flask from the
+[GitHub Releases](https://github.com/SysQuantixCore/PyPanel-Flask/releases) page.
+
+See the [release notes](https://github.com/SysQuantixCore/PyPanel-Flask/releases)
+for version history, updates, improvements, and bug fixes.
+
 ## 🎯 Project Goals
 
 - Simplify administrative interface development.
