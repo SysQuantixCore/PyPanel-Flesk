@@ -349,6 +349,13 @@
             overflow-y: auto;
         }
 
+        .dashboard.module-view {
+            display: flex;
+            flex-direction: column;
+            padding: 0;
+            overflow: hidden;
+        }
+
         .section {
             margin-bottom: 18px;
 
@@ -920,8 +927,13 @@
 
                 <div
                     class="tree-module"
-                    data-module="Monitoring"
-                    onclick="log('Monitoring accessed')">
+                    data-module="Traffic Monitor"
+                    onclick="openModule(
+                        '/traffic-monitor',
+                        'Monitoring',
+                        'Real-time Site Traffic',
+                        '📊'
+                    )">
 
                     📊 Monitoring
 
@@ -1183,7 +1195,8 @@
 
                                 <div
                                     class="module"
-                                    onclick="log('Security accessed')">
+                                    onclick="log('Security accessed'); openModule('/security', 'Security', 'module', '🔒')">
+
 
                                     <div class="module-icon">
                                         🔒
@@ -1196,7 +1209,7 @@
                                         </div>
 
                                         <div class="module-description">
-                                            Security Management
+                                            SSL/TLS & Cloudflare Management
                                         </div>
 
                                     </div>
@@ -1234,7 +1247,12 @@
 
                                 <div
                                     class="module"
-                                    onclick="log('Monitoring accessed')">
+                                    onclick="openModule(
+                                        '/traffic-monitor',
+                                        'Monitoring',
+                                        'Real-time Site Traffic',
+                                        '📊'
+                                    )">
 
                                     <div class="module-icon">
                                         📊
@@ -1247,7 +1265,7 @@
                                         </div>
 
                                         <div class="module-description">
-                                            System Monitoring
+                                            Real-time Site Traffic
                                         </div>
 
                                     </div>
@@ -1811,6 +1829,9 @@ function returnToDashboard() {
 
     }
 
+    if (dashboard) {
+        dashboard.classList.remove("module-view");
+    }
 
     if (tabs) {
 
@@ -2094,7 +2115,7 @@ async function loadExternalModule(url, moduleName = "Module") {
                         padding:15px;
                         color:#b00020;
                     ">
-                        Unable to load File Manager.
+                        Unable to load ${moduleName}. Check the Flask route and server logs.
                     </div>
 
                 </div>
@@ -2176,7 +2197,9 @@ async function openModule(
     if (
         url === "/filemanager" ||
         url === "/database" ||
-        url === "/backup"
+        url === "/backup" ||
+        url === "/traffic-monitor" ||
+        url === "/security"
     ) {
 
         document
@@ -2196,6 +2219,12 @@ async function openModule(
                 "dashboardTabs"
             );
 
+        const dashboardArea =
+            document.getElementById("dashboardArea");
+
+        if (dashboardArea) {
+            dashboardArea.classList.add("module-view");
+        }
 
         if (tabs) {
 
@@ -2251,6 +2280,12 @@ function switchTab(
 
     }
 
+    const dashboardArea =
+        document.getElementById("dashboardArea");
+
+    if (dashboardArea) {
+        dashboardArea.classList.remove("module-view");
+    }
 
     const tabs =
         document.getElementById(

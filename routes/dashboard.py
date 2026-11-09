@@ -24,3 +24,8 @@ def database():
 @login_required
 def filemanager():
     return render_template("filemanager.html")
+
+@dashboard_bp.route("/traffic-monitor")
+@login_required
+def monitor():
+    return render_template("monitor.html")
