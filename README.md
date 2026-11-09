@@ -1,6 +1,6 @@
 # PyPanel Flask
 
-[English](README.md) | [Português](README.BRASIL.md)
+[English](README.md) | [Português-BR](README.BRASIL.md)
 
 A lightweight administrative panel developed with Python and Flask.
 
