@@ -37,10 +37,3 @@ Download the latest version of PyPanel Flask from the
 
 See the [release notes](https://github.com/SysQuantixCore/PyPanel-Flask/releases)
 for version history, updates, improvements, and bug fixes.
-
-## 🎯 Project Goals
-
-- Simplify administrative interface development.
-- Maintain clean and organized code.
-- Provide a flexible foundation for future features.
-- Ensure easy customization and scalability.
