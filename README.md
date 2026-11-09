@@ -30,7 +30,3 @@ PyPanel Flask is designed to provide a simple and flexible foundation for develo
 - Maintain clean and organized code.
 - Provide a flexible foundation for future features.
 - Ensure easy customization and scalability.
-
-## 📄 License
-
-See the repository for licensing information.
