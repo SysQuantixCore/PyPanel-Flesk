@@ -2,7 +2,7 @@
 
 [![Python](https://img.shields.io/badge/Python-3%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![Flask](https://img.shields.io/badge/Flask-Web%20Framework-black?logo=flask&logoColor=white)](https://flask.palletsprojects.com/)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![License](https://img.shields.io/badge/License-GPL--2.0-blue.svg)](LICENSE)
 
 [English](README.md) | [Português-BR](README.BRASIL.md)
 
@@ -50,7 +50,9 @@ Visit [GitHub Releases](https://github.com/SysQuantixCore/PyPanel-Flask/releases
 
 ## 📄 License
 
-This project is licensed under the [MIT License](LICENSE).
+This project is licensed under the **GNU General Public License v2.0 (GPL-2.0)**.
+
+See the [LICENSE](LICENSE) file for details.
 
 ---
 
