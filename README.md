@@ -47,9 +47,3 @@ Get the latest version of PyPanel Flask:
 [![Latest Release](https://img.shields.io/github/v/release/SysQuantixCore/PyPanel-Flask?label=Latest%20Release)](https://github.com/SysQuantixCore/PyPanel-Flask/releases/latest)
 
 Visit [GitHub Releases](https://github.com/SysQuantixCore/PyPanel-Flask/releases) for version history, updates, improvements, and bug fixes.
-
-## 📄 License
-
-This project is licensed under the **GNU General Public License v2.0 (GPL-2.0)**.
-
-See the [LICENSE](LICENSE) file for details.
