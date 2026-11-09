@@ -1,5 +1,13 @@
 # PyPanel Flask
 
+[🇺🇸 English](README.md) | [🇧🇷 Português](README.pt-BR.md)
+
+A lightweight administrative panel developed with Python and Flask.
+
+...
+
+# PyPanel Flask
+
 A lightweight administrative panel developed with **Python and Flask**, featuring a modern interface, organized routing architecture, and modular structure for managing pages and application functionality.
 
 ## ✨ Features
