@@ -53,7 +53,3 @@ Visit [GitHub Releases](https://github.com/SysQuantixCore/PyPanel-Flask/releases
 This project is licensed under the **GNU General Public License v2.0 (GPL-2.0)**.
 
 See the [LICENSE](LICENSE) file for details.
-
----
-
-**PyPanel Flask** · Developed by [SysQuantixCore](https://github.com/SysQuantixCore)
